@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Physician – API Tester</title>
+    <title>Department – API Tester</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
@@ -60,7 +60,7 @@
         /* Color Themes */
         .c-green { border-top-color: #2db870; }
         .c-green .badge { color: #2db870; background: #eafff2; border-color: #bdf2d5; }
-        .c-green .btn { background: #4c8cf5; } /* Based on image, ID search button is blue */
+        .c-green .btn { background: #4c8cf5; }
         .c-green th { color: #2db870; background: #f0faf4; }
 
         .c-blue { border-top-color: #4c7ef3; }
@@ -114,33 +114,33 @@
     <a href="/" class="back-btn">← Back to Home</a>
 
     <div class="header">
-        <h1>🩺 Physician API Tester</h1>
-        <p>Test all Physician endpoints below</p>
+        <h1>🩺 Department API Tester</h1>
+        <p>Test all Department endpoints below</p>
     </div>
 
     <div class="grid">
         <div class="card c-green">
             <div class="card-header">
                 <span class="badge">GET</span>
-                <span class="card-title">All Physicians</span>
+                <span class="card-title">All Departments</span>
             </div>
-            <div class="endpoint">/entity/ayan/Physician</div>
+            <div class="endpoint">/entity/ayan/Department</div>
 
-            <p class="msg-error" th:if="${physicians == null or physicians.isEmpty()}">No records found.</p>
+            <p class="msg-error" th:if="${departments == null or departments.isEmpty()}">No records found.</p>
 
-            <div class="table-responsive" th:if="${physicians != null and !physicians.isEmpty()}">
+            <div class="table-responsive" th:if="${departments != null and !departments.isEmpty()}">
                 <table>
                     <thead>
                     <tr>
-                        <th th:each="key : ${physicians[0].keySet()}" th:text="${key}"></th>
+                        <th th:each="key : ${departments[0].keySet()}" th:text="${key}"></th>
                         <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="n : ${physicians}">
+                    <tr th:each="n : ${departments}">
                         <td th:each="val : ${n.values()}" th:text="${val}"></td>
                         <td>
-                            <form th:action="@{|/entity/ayan/Physician/delete/${n.values().iterator().next()}|}" method="post">
+                            <form th:action="@{|/entity/ayan/Department/delete/${n.values().iterator().next()}|}" method="post">
                                 <button class="btn btn-delete" type="submit">Delete</button>
                             </form>
                         </td>
@@ -156,117 +156,113 @@
         <div class="card c-blue">
             <div class="card-header">
                 <span class="badge">GET</span>
-                <span class="card-title">Get Physician by ID</span>
+                <span class="card-title">Get Department by ID</span>
             </div>
-            <div class="endpoint">/entity/ayan/Physician/{id}</div>
+            <div class="endpoint">/entity/ayan/Department/{id}</div>
 
-            <form th:action="@{/entity/ayan/Physician/searchById}" method="get">
+            <form th:action="@{/entity/ayan/Department/searchById}" method="get">
                 <div class="form-group">
-                    <label>Employee ID</label>
-                    <input class="form-control" type="number" name="id" placeholder="e.g. 101" required/>
+                    <label>Department ID</label>
+                    <input class="form-control" type="number" name="id" placeholder="e.g. 1" required/>
                 </div>
                 <button class="btn" type="submit">Search</button>
             </form>
 
-            <div th:if="${physicianById != null}">
+            <div th:if="${departmentById != null}">
                 <hr/>
-                <div th:each="entry : ${physicianById}" style="font-size:13px; margin-bottom:6px;">
+                <div th:each="entry : ${departmentById}" style="font-size:13px; margin-bottom:6px;">
                     <strong style="color:#555; text-transform:capitalize;" th:text="${entry.key}"></strong>:
                     <span th:text="${entry.value}"></span>
                 </div>
             </div>
-            <p class="msg-error" th:if="${physicianById == null and param.id != null}">Not found.</p>
+            <p class="msg-error" th:if="${departmentById == null and param.id != null}">Not found.</p>
         </div>
 
         <div class="card c-orange">
             <div class="card-header">
                 <span class="badge">GET</span>
-                <span class="card-title">Get Physician by Name</span>
+                <span class="card-title">Get Department by Name</span>
             </div>
-            <div class="endpoint">/entity/ayan/Physician/name?name=</div>
+            <div class="endpoint">/entity/ayan/Department/name?name=</div>
 
-            <form th:action="@{/entity/ayan/Physician/searchByName}" method="get">
+            <form th:action="@{/entity/ayan/Department/searchByName}" method="get">
                 <div class="form-group">
                     <label>Name</label>
-                    <input class="form-control" type="text" name="name" placeholder="e.g. John Doe" required/>
+                    <input class="form-control" type="text" name="name" placeholder="e.g. Cardiology" required/>
                 </div>
                 <button class="btn" type="submit">Search</button>
             </form>
 
-            <div th:if="${physicianByName != null and !physicianByName.isEmpty()}">
+            <div th:if="${departmentByName != null and !departmentByName.isEmpty()}">
                 <hr/>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                        <tr><th th:each="key : ${physicianByName[0].keySet()}" th:text="${key}"></th></tr>
+                        <tr><th th:each="key : ${departmentByName[0].keySet()}" th:text="${key}"></th></tr>
                         </thead>
                         <tbody>
-                        <tr th:each="n : ${physicianByName}">
+                        <tr th:each="n : ${departmentByName}">
                             <td th:each="val : ${n.values()}" th:text="${val}"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <p class="msg-error" th:if="${(physicianByName == null or physicianByName.isEmpty()) and param.name != null}">Not found.</p>
+            <p class="msg-error" th:if="${(departmentByName == null or departmentByName.isEmpty()) and param.name != null}">Not found.</p>
         </div>
 
         <div class="card c-purple">
             <div class="card-header">
                 <span class="badge">GET</span>
-                <span class="card-title">Get by Position</span>
+                <span class="card-title">Get by Head</span>
             </div>
-            <div class="endpoint">/entity/ayan/Physician/position?position=</div>
+            <div class="endpoint">/entity/ayan/Department/head?head=</div>
 
-            <form th:action="@{/entity/ayan/Physician/searchByPosition}" method="get">
+            <form th:action="@{/entity/ayan/Department/searchByHead}" method="get">
                 <div class="form-group">
-                    <label>Position</label>
-                    <input class="form-control" type="text" name="position" placeholder="e.g. Senior Surgeon" required/>
+                    <label>Head (Physician ID)</label>
+                    <input class="form-control" type="number" name="head" placeholder="e.g. 101" required/>
                 </div>
                 <button class="btn" type="submit">Search</button>
             </form>
 
-            <div th:if="${physicianByPosition != null and !physicianByPosition.isEmpty()}">
+            <div th:if="${departmentByHead != null and !departmentByHead.isEmpty()}">
                 <hr/>
                 <div class="table-responsive">
                     <table>
                         <thead>
-                        <tr><th th:each="key : ${physicianByPosition[0].keySet()}" th:text="${key}"></th></tr>
+                        <tr><th th:each="key : ${departmentByHead[0].keySet()}" th:text="${key}"></th></tr>
                         </thead>
                         <tbody>
-                        <tr th:each="n : ${physicianByPosition}">
+                        <tr th:each="n : ${departmentByHead}">
                             <td th:each="val : ${n.values()}" th:text="${val}"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <p class="msg-error" th:if="${(physicianByPosition == null or physicianByPosition.isEmpty()) and param.position != null}">Not found.</p>
+            <p class="msg-error" th:if="${(departmentByHead == null or departmentByHead.isEmpty()) and param.head != null}">Not found.</p>
         </div>
 
         <div class="card c-yellow">
             <div class="card-header">
                 <span class="badge">POST</span>
-                <span class="card-title">Create Physician</span>
+                <span class="card-title">Create Department</span>
             </div>
-            <div class="endpoint">/entity/ayan/Physician/create</div>
+            <div class="endpoint">/entity/ayan/Department/create</div>
 
-            <form th:action="@{/entity/ayan/Physician/create}" method="post">
+            <form th:action="@{/entity/ayan/Department/create}" method="post">
                 <div class="form-group">
-                    <label>Employee ID</label>
-                    <input class="form-control" type="number" name="employeeId" placeholder="101" required/>
+                    <label>Department ID</label>
+                    <input class="form-control" type="number" name="departmentId" placeholder="1" required/>
                 </div>
                 <div class="form-group">
                     <label>Name</label>
-                    <input class="form-control" type="text" name="name" placeholder="John Doe" required/>
+                    <input class="form-control" type="text" name="name" placeholder="Cardiology" required/>
                 </div>
                 <div class="form-group">
-                    <label>Position</label>
-                    <input class="form-control" type="text" name="position" placeholder="Senior Surgeon" required/>
-                </div>
-                <div class="form-group">
-                    <label>SSN</label>
-                    <input class="form-control" type="number" name="ssn" placeholder="123456789" required/>
+                    <label>Head (Physician ID)</label>
+                    <input class="form-control" type="number" name="head" placeholder="101" required/>
                 </div>
                 <button class="btn" type="submit">Create</button>
             </form>
@@ -278,13 +274,13 @@
         <div class="card c-pink">
             <div class="card-header">
                 <span class="badge">POST</span>
-                <span class="card-title">Update Physician</span>
+                <span class="card-title">Update Department</span>
             </div>
-            <div class="endpoint">/entity/ayan/Physician/update/{id}</div>
+            <div class="endpoint">/entity/ayan/Department/update/{id}</div>
 
-            <form th:action="@{/entity/ayan/Physician/updateForm}" method="post">
+            <form th:action="@{/entity/ayan/Department/updateForm}" method="post">
                 <div class="form-group">
-                    <label>Employee ID (To Update)</label>
+                    <label>Department ID (To Update)</label>
                     <input class="form-control" type="number" name="id" placeholder="ID to update" required/>
                 </div>
                 <div class="form-group">
@@ -292,12 +288,8 @@
                     <input class="form-control" type="text" name="name" placeholder="New name" required/>
                 </div>
                 <div class="form-group">
-                    <label>Position</label>
-                    <input class="form-control" type="text" name="position" placeholder="New position" required/>
-                </div>
-                <div class="form-group">
-                    <label>SSN</label>
-                    <input class="form-control" type="number" name="ssn" placeholder="New SSN" required/>
+                    <label>Head (Physician ID)</label>
+                    <input class="form-control" type="number" name="head" placeholder="New Head ID" required/>
                 </div>
                 <button class="btn" type="submit">Update</button>
             </form>
