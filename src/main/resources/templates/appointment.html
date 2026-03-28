@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Appointment - API Tester</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            min-height: 100vh;
+            padding: 36px 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #4f7ef8, #a56ef8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #4f7ef8, #a56ef8);
+            animation: slideIn 0.9s ease forwards;
+            transform-origin: left;
+        }
+
+        @keyframes slideIn {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        .header p { margin-top: 10px; font-size: 14px; color: #777; }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            color: #555;
+            font-size: 13px;
+            padding: 6px 16px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background: #fff;
+            margin-bottom: 24px;
+            transition: background 0.15s;
+        }
+
+        .back-btn:hover { background: #f0f0f0; }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            max-width: 1380px;
+            margin: 0 auto 24px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 22px 20px 20px;
+            width: 320px;
+            border-top: 4px solid #4f7ef8;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+        }
+
+        .card.c1 { --c: #4f7ef8; --cbg: #f0f5ff; --cborder: #c5d8ff; border-top-color: #4f7ef8; }
+        .card.c2 { --c: #f87c4f; --cbg: #fff4ef; --cborder: #ffd5c2; border-top-color: #f87c4f; }
+        .card.c3 { --c: #4fc98c; --cbg: #edfaf4; --cborder: #b2ecd1; border-top-color: #4fc98c; }
+        .card.c4 { --c: #a56ef8; --cbg: #f5f0ff; --cborder: #dac5ff; border-top-color: #a56ef8; }
+        .card.c5 { --c: #f8c44f; --cbg: #fffbef; --cborder: #ffe9a0; border-top-color: #f8c44f; }
+        .card.c6 { --c: #f84f8e; --cbg: #fff0f5; --cborder: #ffc2d9; border-top-color: #f84f8e; }
+        .card.c7 { --c: #2f9d9c; --cbg: #ecfbfb; --cborder: #b7eceb; border-top-color: #2f9d9c; }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .method-badge {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--cbg);
+            color: var(--c);
+            border: 1px solid var(--cborder);
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+
+        .card-endpoint {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 14px;
+            margin-top: 2px;
+            overflow-wrap: anywhere;
+        }
+
+        hr.divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin-bottom: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th {
+            background: var(--cbg);
+            color: var(--c);
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--cborder);
+            text-transform: capitalize;
+        }
+
+        td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--cbg); }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            color: #999;
+            text-transform: capitalize;
+        }
+
+        .form-group input {
+            padding: 7px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border 0.15s;
+            width: 100%;
+        }
+
+        .form-group input:focus { border-color: var(--c); }
+
+        .btn {
+            padding: 7px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #fff;
+            background: var(--c);
+            transition: opacity 0.15s;
+            margin-top: 4px;
+        }
+
+        .btn:hover { opacity: 0.85; }
+
+        .btn-delete {
+            background: #f84f4f;
+            padding: 4px 12px;
+            font-size: 11px;
+            margin-top: 0;
+        }
+
+        .no-data { font-size: 12px; color: #bbb; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div style="max-width:1380px; margin: 0 auto;">
+    <a href="/" class="back-btn">Back to Home</a>
+</div>
+
+<div class="header">
+    <h1>Appointment API Tester</h1>
+    <p>Test all Appointment endpoints below</p>
+</div>
+
+<div class="row">
+    <div class="card c1" style="width: 1360px;">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">All Appointments</span>
+        </div>
+        <div class="card-endpoint">/appointments</div>
+        <hr class="divider"/>
+
+        <p class="no-data" th:if="${appointments == null or appointments.isEmpty()}">No records found.</p>
+
+        <div th:if="${appointments != null and !appointments.isEmpty()}" style="overflow-x:auto; max-height: 320px; overflow-y:auto;">
+            <table>
+                <thead>
+                <tr>
+                    <th th:each="key : ${appointments[0].keySet()}" th:text="${key}"></th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${appointments}">
+                    <td th:each="val : ${a.values()}" th:text="${val}"></td>
+                    <td>
+                        <form th:action="@{/entity/anubhob/Appointment/delete}" method="post">
+                            <input type="hidden" name="id"
+                                   th:value="${a['appointmentId'] != null ? a['appointmentId'] : a.values().iterator().next()}"/>
+                            <button class="btn btn-delete" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="card c2">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Get by Appointment ID</span>
+        </div>
+        <div class="card-endpoint">/appointments/{id}</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/anubhob/Appointment/searchById}" method="get">
+            <div class="form-group">
+                <label>Appointment ID</label>
+                <input type="number" name="id" placeholder="e.g. 1" required/>
+            </div>
+            <button class="btn" type="submit">Search</button>
+        </form>
+
+        <div th:if="${appointmentById != null}" style="margin-top:12px;">
+            <hr class="divider"/>
+            <div th:each="entry : ${appointmentById}" style="font-size:12px; margin-bottom:4px;">
+                <strong style="color:#555; text-transform:capitalize;" th:text="${entry.key}"></strong>:
+                <span th:text="${entry.value}"></span>
+            </div>
+        </div>
+        <p class="no-data" style="margin-top:10px;" th:if="${appointmentById == null and param.id != null}">Not found.</p>
+    </div>
+
+    <div class="card c3">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Get by Patient SSN</span>
+        </div>
+        <div class="card-endpoint">/appointments/patient/{patientSsn}</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/anubhob/Appointment/searchByPatient}" method="get">
+            <div class="form-group">
+                <label>Patient SSN</label>
+                <input type="number" name="patientSsn" placeholder="e.g. 123456789" required/>
+            </div>
+            <button class="btn" type="submit">Search</button>
+        </form>
+
+        <div th:if="${appointmentByPatient != null and !appointmentByPatient.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
+            <hr class="divider"/>
+            <table>
+                <thead>
+                <tr>
+                    <th th:each="key : ${appointmentByPatient[0].keySet()}" th:text="${key}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${appointmentByPatient}">
+                    <td th:each="val : ${a.values()}" th:text="${val}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card c4">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Get by Nurse ID</span>
+        </div>
+        <div class="card-endpoint">/appointments/nurse/{nurseId}</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/anubhob/Appointment/searchByNurse}" method="get">
+            <div class="form-group">
+                <label>Prep Nurse ID</label>
+                <input type="number" name="nurseId" placeholder="e.g. 101" required/>
+            </div>
+            <button class="btn" type="submit">Search</button>
+        </form>
+
+        <div th:if="${appointmentByNurse != null and !appointmentByNurse.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
+            <hr class="divider"/>
+            <table>
+                <thead>
+                <tr>
+                    <th th:each="key : ${appointmentByNurse[0].keySet()}" th:text="${key}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${appointmentByNurse}">
+                    <td th:each="val : ${a.values()}" th:text="${val}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="card c5">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Get by Physician ID</span>
+        </div>
+        <div class="card-endpoint">/appointments/physician/{physicianId}</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/anubhob/Appointment/searchByPhysician}" method="get">
+            <div class="form-group">
+                <label>Physician ID</label>
+                <input type="number" name="physicianId" placeholder="e.g. 2001" required/>
+            </div>
+            <button class="btn" type="submit">Search</button>
+        </form>
+
+        <div th:if="${appointmentByPhysician != null and !appointmentByPhysician.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
+            <hr class="divider"/>
+            <table>
+                <thead>
+                <tr>
+                    <th th:each="key : ${appointmentByPhysician[0].keySet()}" th:text="${key}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${appointmentByPhysician}">
+                    <td th:each="val : ${a.values()}" th:text="${val}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card c6">
+        <div class="card-header">
+            <span class="method-badge">POST</span>
+            <span class="card-title">Create Appointment</span>
+        </div>
+        <div class="card-endpoint">/appointments</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/anubhob/Appointment/create}" method="post">
+            <div class="form-group"><label>Appointment ID</label><input type="number" name="appointmentId" required/></div>
+            <div class="form-group"><label>Patient SSN</label><input type="number" name="patientSsn" required/></div>
+            <div class="form-group"><label>Prep Nurse ID (optional)</label><input type="number" name="prepNurseId"/></div>
+            <div class="form-group"><label>Physician ID</label><input type="number" name="physicianId" required/></div>
+            <div class="form-group"><label>Start</label><input type="datetime-local" name="start" required/></div>
+            <div class="form-group"><label>End</label><input type="datetime-local" name="end" required/></div>
+            <div class="form-group"><label>Examination Room</label><input type="text" name="examinationRoom" required/></div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+
+    <div class="card c7">
+        <div class="card-header">
+            <span class="method-badge">PUT</span>
+            <span class="card-title">Update Appointment</span>
+        </div>
+        <div class="card-endpoint">/appointments/{id}</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/anubhob/Appointment/updateForm}" method="post">
+            <div class="form-group"><label>Appointment ID (to update)</label><input type="number" name="id" required/></div>
+            <div class="form-group"><label>Patient SSN</label><input type="number" name="patientSsn" required/></div>
+            <div class="form-group"><label>Prep Nurse ID (optional)</label><input type="number" name="prepNurseId"/></div>
+            <div class="form-group"><label>Physician ID</label><input type="number" name="physicianId" required/></div>
+            <div class="form-group"><label>Start</label><input type="datetime-local" name="start" required/></div>
+            <div class="form-group"><label>End</label><input type="datetime-local" name="end" required/></div>
+            <div class="form-group"><label>Examination Room</label><input type="text" name="examinationRoom" required/></div>
+            <button class="btn" type="submit">Update</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
+
