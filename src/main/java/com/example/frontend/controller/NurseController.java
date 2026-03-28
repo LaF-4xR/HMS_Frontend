@@ -17,14 +17,13 @@ public class NurseController {
         this.nurseService = nurseService;
     }
 
-    // ✅ Load main page
     @GetMapping
     public String nursePage(Model model){
         model.addAttribute("nurses", nurseService.getAllNurses());
         return "nurse";
     }
 
-    // ✅ Search by ID
+    // Search by ID
     @GetMapping("/searchById")
     public String searchById(@RequestParam int id, Model model) {
         model.addAttribute("nurses", nurseService.getAllNurses());
@@ -32,7 +31,7 @@ public class NurseController {
         return "nurse";
     }
 
-    // ✅ Search by Name
+    // Search by Name
     @GetMapping("/searchByName")
     public String searchByName(@RequestParam String name, Model model) {
         model.addAttribute("nurses", nurseService.getAllNurses());
@@ -40,7 +39,7 @@ public class NurseController {
         return "nurse";
     }
 
-    // ✅ Search by Position
+    // Search by Position
     @GetMapping("/searchByPosition")
     public String searchByPosition(@RequestParam String position, Model model) {
         model.addAttribute("nurses", nurseService.getAllNurses());
@@ -48,21 +47,27 @@ public class NurseController {
         return "nurse";
     }
 
-    // ✅ Create nurse
+    // Create nurse
     @PostMapping("/create")
     public String createNurse(@RequestParam Map<String, Object> nurse){
+
+        if (nurse.get("registered") != null) {
+            String val = nurse.get("registered").toString();
+            nurse.put("registered", val.equalsIgnoreCase("true") ? 1 : 0);
+        }
+
         nurseService.createNurse(nurse);
         return "redirect:/entity/arunima/Nurse";
     }
 
-    // ✅ Update nurse
+    // Update nurse
     @PostMapping("/update/{id}")
     public String updateNurse(@PathVariable int id, @RequestParam Map<String, Object> nurse){
         nurseService.updateNurse(id, nurse);
         return "redirect:/entity/arunima/Nurse";
     }
 
-    // ✅ Update form handler
+    // Update form handler
     @PostMapping("/updateForm")
     public String updateForm(@RequestParam int id,
                              @RequestParam Map<String, Object> body) {

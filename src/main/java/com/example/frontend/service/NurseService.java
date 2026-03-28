@@ -3,6 +3,7 @@ package com.example.frontend.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
 
 import java.util.*;
 
@@ -60,8 +61,18 @@ public class NurseService {
     //create nurse
     public Map createNurse(Map nurse) {
         try {
-            return restTemplate.postForObject(baseUrl + "/nurses", nurse, Map.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Map> request = new HttpEntity<>(nurse, headers);
+
+            return restTemplate.postForObject(
+                    baseUrl + "/nurses",
+                    request,
+                    Map.class
+            );
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -69,9 +80,19 @@ public class NurseService {
     //update nurse
     public void updateNurse(int id, Map nurse) {
         try {
-            restTemplate.put(baseUrl + "/nurses/" + id, nurse);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Map> request = new HttpEntity<>(nurse, headers);
+
+            restTemplate.exchange(
+                    baseUrl + "/nurses/" + id,
+                    HttpMethod.PUT,
+                    request,
+                    Void.class
+            );
         } catch (Exception e) {
-            System.err.println("Error updating nurse: ");
+            e.printStackTrace();
         }
     }
 }
