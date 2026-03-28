@@ -18,7 +18,7 @@ public class HomeController {
         m1.put("id", "ayan");
         m1.put("name", "Ayan Pal");
         m1.put("initials", "AP");
-        m1.put("entities", Arrays.asList("Physician", "Department", "Affilieted With"));
+        m1.put("entities", Arrays.asList("Physician", "Department", "Affiliated With"));
         members.add(m1);
 
         // Member 2
