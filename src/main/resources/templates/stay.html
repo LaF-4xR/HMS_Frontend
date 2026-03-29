@@ -363,6 +363,10 @@
 
         <form th:action="@{/entity/soumadwip/Stay/create}" method="post">
             <div class="form-group">
+                <label>Stay ID</label>
+                <input type="number" name="stayId" placeholder="e.g. 3000"/>
+            </div>
+            <div class="form-group">
                 <label>Patient ID</label>
                 <input type="number" name="patientId" placeholder="e.g. 10"/>
             </div>
@@ -372,11 +376,11 @@
             </div>
             <div class="form-group">
                 <label>Stay Start</label>
-                <input type="text" name="stayStart" placeholder="YYYY-MM-DD"/>
+                <input type="datetime-local" name="stayStart"/>
             </div>
             <div class="form-group">
                 <label>Stay End</label>
-                <input type="text" name="stayEnd" placeholder="YYYY-MM-DD"/>
+                <input type="datetime-local" name="stayEnd"/>
             </div>
             <button class="btn" type="submit">Create</button>
         </form>
@@ -394,7 +398,7 @@
         <form th:action="@{/entity/soumadwip/Stay/updateForm}" method="post">
             <div class="form-group">
                 <label>Stay ID (to update)</label>
-                <input type="number" name="id" placeholder="ID to update"/>
+                <input type="number" name="stayId" placeholder="ID to update"/>
             </div>
             <div class="form-group">
                 <label>Patient ID</label>
@@ -406,11 +410,11 @@
             </div>
             <div class="form-group">
                 <label>Stay Start</label>
-                <input type="text" name="stayStart" placeholder="YYYY-MM-DD"/>
+                <input type="datetime-local" name="stayStart"/>
             </div>
             <div class="form-group">
                 <label>Stay End</label>
-                <input type="text" name="stayEnd" placeholder="YYYY-MM-DD"/>
+                <input type="datetime-local" name="stayEnd"/>
             </div>
             <button class="btn" type="submit">Update</button>
         </form>

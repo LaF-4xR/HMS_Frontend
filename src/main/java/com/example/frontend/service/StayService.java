@@ -28,7 +28,7 @@ public class StayService {
     //get all stays
     public List<Map> getAllStays() {
         try {
-            Map[] result = restTemplate.getForObject(baseUrl + "/stays", Map[].class);
+            Map[] result = restTemplate.getForObject(baseUrl + "/stays/all", Map[].class);
             return result != null ? Arrays.asList(result) : Collections.emptyList();
         } catch (Exception e) {
             return Collections.emptyList();
@@ -79,7 +79,7 @@ public class StayService {
             HttpEntity<Map> request = new HttpEntity<>(stay, headers);
 
             return restTemplate.postForObject(
-                    baseUrl + "/stays",
+                    baseUrl + "/stays/create",
                     request,
                     Map.class
             );

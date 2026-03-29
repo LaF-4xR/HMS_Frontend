@@ -32,6 +32,20 @@ public class OnCallController {
         return "oncall";
     }
 
+    @GetMapping("/searchByFloor")
+    public String searchByFloor(@RequestParam int blockFloor, Model model) {
+        model.addAttribute("oncalls", onCallService.getAllOnCall());
+        model.addAttribute("oncallByFloor", onCallService.getBlocksByFloor(blockFloor));
+        return "oncall";
+    }
+
+    @GetMapping("/searchByCode")
+    public String searchByCode(@RequestParam int blockCode, Model model) {
+        model.addAttribute("oncalls", onCallService.getAllOnCall());
+        model.addAttribute("oncallByCode", onCallService.getBlocksByCode(blockCode));
+        return "oncall";
+    }
+
     //create
     @PostMapping("/create")
     public String create(@RequestParam int nurseId,

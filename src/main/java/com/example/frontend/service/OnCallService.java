@@ -40,6 +40,30 @@ public class OnCallService {
         }
     }
 
+    public List<Map> getBlocksByFloor(int blockFloor) {
+        try {
+            Map[] result = restTemplate.getForObject(
+                    baseUrl + "/oncall/floor/" + blockFloor,
+                    Map[].class
+            );
+            return result != null ? Arrays.asList(result) : Collections.emptyList();
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Map> getBlocksByCode(int blockCode) {
+        try {
+            Map[] result = restTemplate.getForObject(
+                    baseUrl + "/oncall/code/" + blockCode,
+                    Map[].class
+            );
+            return result != null ? Arrays.asList(result) : Collections.emptyList();
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
     // CREATE
     public Map createOnCall(Map<String, Object> body) {
         try {
