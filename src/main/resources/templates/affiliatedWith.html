@@ -4,303 +4,400 @@
     <meta charset="UTF-8"/>
     <title>Affiliated With – API Tester</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background: #f4f7f9;
-            padding: 40px 20px;
-            color: #333;
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            min-height: 100vh;
+            padding: 36px 24px;
         }
 
-        /* Header */
-        .header { text-align: center; margin-bottom: 40px; }
-        .header h1 {
-            color: #2db870;
-            font-size: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 8px;
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
         }
-        .header p { color: #666; font-size: 15px; }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #4fc98c, #2db870);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 3px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #4fc98c, #2db870);
+            animation: slideIn 0.9s ease forwards;
+            transform-origin: left;
+        }
+
+        @keyframes slideIn {
+            from { transform: scaleX(0); }
+            to   { transform: scaleX(1); }
+        }
+
+        .header p { margin-top: 10px; font-size: 14px; color: #777; }
 
         .back-btn {
-            display: inline-block; text-decoration: none; color: #555; font-size: 14px;
-            padding: 8px 16px; border: 1px solid #ddd; border-radius: 20px;
-            background: #fff; margin-bottom: 24px; transition: background 0.2s;
+            display: inline-block;
+            text-decoration: none; color: #555; font-size: 13px;
+            padding: 6px 16px; border: 1px solid #ccc;
+            border-radius: 20px; background: #fff;
+            margin-bottom: 24px;
+            transition: background 0.15s;
         }
-        .back-btn:hover { background: #eee; }
-        .container { max-width: 1100px; margin: 0 auto; }
+        .back-btn:hover { background: #f0f0f0; }
 
-        /* Grid Layout */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        /* ── Row layout same as home page ── */
+        .row {
+            display: flex;
+            justify-content: center;
             gap: 24px;
+            max-width: 1050px;
+            margin: 0 auto 24px;
+            flex-wrap: wrap;
         }
-        @media (max-width: 992px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
 
-        /* Card Styling */
+        /* ── Card ── */
         .card {
             background: #fff;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            border-top: 4px solid;
+            border-radius: 14px;
+            padding: 22px 20px 20px;
+            width: 300px;
+            border-top: 4px solid #4fc98c;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             flex-direction: column;
         }
 
-        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; font-weight: bold; font-size: 16px; }
-        .badge { padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; border: 1px solid; text-transform: uppercase; }
-        .endpoint { color: #a0aab5; font-size: 12px; margin-bottom: 20px; word-break: break-all; }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+        }
 
-        /* Color Themes */
-        .c-green { border-top-color: #2db870; }
-        .c-green .badge { color: #2db870; background: #eafff2; border-color: #bdf2d5; }
-        .c-green .btn { background: #4c8cf5; }
-        .c-green th { color: #2db870; background: #f0faf4; }
+        /* each card gets a slightly different shade */
+        .card.c1 { --c: #4fc98c; --cbg: #edfaf4; --cborder: #b2ecd1; border-top-color: #4fc98c; }
+        .card.c2 { --c: #4f7ef8; --cbg: #f0f5ff; --cborder: #c5d8ff; border-top-color: #4f7ef8; }
+        .card.c3 { --c: #f87c4f; --cbg: #fff4ef; --cborder: #ffd5c2; border-top-color: #f87c4f; }
+        .card.c4 { --c: #a56ef8; --cbg: #f5f0ff; --cborder: #dac5ff; border-top-color: #a56ef8; }
+        .card.c5 { --c: #f8c44f; --cbg: #fffbef; --cborder: #ffe9a0; border-top-color: #f8c44f; }
+        .card.c6 { --c: #f84f8e; --cbg: #fff0f5; --cborder: #ffc2d9; border-top-color: #f84f8e; }
 
-        .c-blue { border-top-color: #4c7ef3; }
-        .c-blue .badge { color: #4c7ef3; background: #edf2ff; border-color: #c2d4ff; }
-        .c-blue .btn { background: #4c7ef3; }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
 
-        .c-orange { border-top-color: #f67a4d; }
-        .c-orange .badge { color: #f67a4d; background: #fff1ec; border-color: #ffd2c2; }
-        .c-orange .btn { background: #f67a4d; }
+        .method-badge {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--cbg);
+            color: var(--c);
+            border: 1px solid var(--cborder);
+            flex-shrink: 0;
+        }
 
-        .c-purple { border-top-color: #a066f2; }
-        .c-purple .badge { color: #a066f2; background: #f6f0ff; border-color: #e0ccff; }
-        .c-purple .btn { background: #a066f2; }
+        .card-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
 
-        .c-yellow { border-top-color: #f5bc47; }
-        .c-yellow .badge { color: #f5bc47; background: #fff9eb; border-color: #ffe4a3; }
-        .c-yellow .btn { background: #f5bc47; }
+        .card-endpoint {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 14px;
+            margin-top: 2px;
+            word-break: break-all;
+        }
 
-        .c-pink { border-top-color: #f44c88; }
-        .c-pink .badge { color: #f44c88; background: #ffeff4; border-color: #ffc4da; }
-        .c-pink .btn { background: #f44c88; }
+        hr.divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin-bottom: 14px;
+        }
 
-        /* Forms */
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; }
-        .form-control { width: 100%; padding: 10px 14px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s; }
-        .form-control:focus { border-color: #aaa; }
+        /* ── Table inside card ── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        th {
+            background: var(--cbg);
+            color: var(--c);
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--cborder);
+            text-transform: capitalize;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--cbg); }
 
-        .btn { color: #fff; border: none; padding: 8px 24px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; align-self: flex-start; margin-top: 4px; }
+        /* ── Forms ── */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            font-size: 11px;
+            color: #999;
+            text-transform: capitalize;
+        }
+        .form-group input {
+            padding: 7px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border 0.15s;
+            width: 100%;
+        }
+        .form-group input:focus { border-color: var(--c); }
+
+        .btn {
+            padding: 7px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #fff;
+            background: var(--c);
+            transition: opacity 0.15s;
+            margin-top: 4px;
+            align-self: flex-start;
+        }
         .btn:hover { opacity: 0.85; }
-        .btn-delete { background: #dc3545 !important; padding: 6px 16px; font-size: 12px; margin-top: 0; }
 
-        /* Table */
-        .table-responsive { overflow-x: auto; max-height: 250px; overflow-y: auto; margin-bottom: 12px; }
-        .table-responsive::-webkit-scrollbar { width: 8px; height: 8px; }
-        .table-responsive::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-        th { padding: 10px; border-bottom: 1px solid #eee; position: sticky; top: 0; font-weight: 600; text-transform: capitalize; }
-        td { padding: 12px 10px; border-bottom: 1px solid #f0f0f0; word-break: break-word; min-width: 100px; max-width: 250px; }
+        .btn-delete {
+            background: #f84f4f;
+            padding: 4px 12px;
+            font-size: 11px;
+            margin-top: 0;
+        }
 
-        /* Utility */
-        hr { border: none; border-top: 1px solid #f0f0f0; margin: 16px 0; }
-        .msg-error { color: #a0aab5; font-size: 13px; margin-top: 12px; font-style: italic; }
-        .msg-alert { color: #dc3545; font-size: 13px; margin-top: 12px; }
-        .msg-success { color: #28a745; font-size: 13px; margin-top: 12px; }
+        .no-data { font-size: 12px; color: #bbb; font-style: italic; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div style="max-width:1050px; margin: 0 auto;">
     <a href="/" class="back-btn">← Back to Home</a>
+</div>
 
-    <div class="header">
-        <h1>🩺 Affiliated With API Tester</h1>
-        <p>Test all Affiliated With endpoints below</p>
+<div class="header">
+    <h1>🩺 Affiliated With API Tester</h1>
+    <p>Test all Affiliated With endpoints below</p>
+</div>
+
+<div class="row">
+    <div class="card c1">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">All Affiliations</span>
+        </div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith</div>
+        <hr class="divider"/>
+
+        <p class="no-data" th:if="${affiliations == null or affiliations.isEmpty()}">No records found.</p>
+
+        <div th:if="${affiliations != null and !affiliations.isEmpty()}" style="overflow-x:auto; max-height: 260px; overflow-y:auto; margin-bottom: 10px;">
+            <table>
+                <thead>
+                <tr>
+                    <th th:each="key : ${affiliations[0].keySet()}" th:text="${key}"></th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="n : ${affiliations}">
+                    <td th:each="val : ${n.values()}" th:text="${val}"></td>
+                    <td>
+                        <form th:action="@{|/entity/ayan/AffiliatedWith/delete/${n.get('physician')}/${n.get('department')}|}" method="post">
+                            <button class="btn btn-delete" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="no-data" style="margin-bottom:10px; color:#f84f4f;" th:if="${deleteError}" th:text="${deleteError}"></p>
+        <p class="no-data" style="margin-bottom:10px; color:#2db870;" th:if="${deleteSuccess}" th:text="${deleteSuccess}"></p>
     </div>
 
-    <div class="grid">
-        <div class="card c-green">
-            <div class="card-header">
-                <span class="badge">GET</span>
-                <span class="card-title">All Affiliations</span>
-            </div>
-            <div class="endpoint">/entity/ayan/AffiliatedWith</div>
-
-            <p class="msg-error" th:if="${affiliations == null or affiliations.isEmpty()}">No records found.</p>
-
-            <div class="table-responsive" th:if="${affiliations != null and !affiliations.isEmpty()}">
-                <table>
-                    <thead>
-                    <tr>
-                        <th th:each="key : ${affiliations[0].keySet()}" th:text="${key}"></th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="n : ${affiliations}">
-                        <td th:each="val : ${n.values()}" th:text="${val}"></td>
-                        <td>
-                            <form th:action="@{|/entity/ayan/AffiliatedWith/delete/${n.get('physician')}/${n.get('department')}|}" method="post">
-                                <button class="btn btn-delete" type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <p class="msg-alert" th:if="${deleteError}" th:text="${deleteError}"></p>
-            <p class="msg-success" th:if="${deleteSuccess}" th:text="${deleteSuccess}"></p>
+    <div class="card c2">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Get by Composite ID</span>
         </div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/{physicianId}/{departmentId}</div>
+        <hr class="divider"/>
 
-        <div class="card c-blue">
-            <div class="card-header">
-                <span class="badge">GET</span>
-                <span class="card-title">Get by Composite ID</span>
+        <form th:action="@{/entity/ayan/AffiliatedWith/searchById}" method="get">
+            <div class="form-group">
+                <label>Physician ID</label>
+                <input type="number" name="physicianId" placeholder="e.g. 1" required/>
             </div>
-            <div class="endpoint">/entity/ayan/AffiliatedWith/{physicianId}/{departmentId}</div>
-
-            <form th:action="@{/entity/ayan/AffiliatedWith/searchById}" method="get">
-                <div class="form-group">
-                    <label>Physician ID</label>
-                    <input class="form-control" type="number" name="physicianId" placeholder="e.g. 1" required/>
-                </div>
-                <div class="form-group">
-                    <label>Department ID</label>
-                    <input class="form-control" type="number" name="departmentId" placeholder="e.g. 101" required/>
-                </div>
-                <button class="btn" type="submit">Search</button>
-            </form>
-
-            <div th:if="${affiliationById != null}">
-                <hr/>
-                <div th:each="entry : ${affiliationById}" style="font-size:13px; margin-bottom:6px;">
-                    <strong style="color:#555; text-transform:capitalize;" th:text="${entry.key}"></strong>:
-                    <span th:text="${entry.value}"></span>
-                </div>
+            <div class="form-group">
+                <label>Department ID</label>
+                <input type="number" name="departmentId" placeholder="e.g. 101" required/>
             </div>
-            <p class="msg-error" th:if="${affiliationById == null and param.physicianId != null}">Not found.</p>
+            <button class="btn" type="submit">Search</button>
+        </form>
+
+        <div th:if="${affiliationById != null}" style="margin-top:12px;">
+            <hr class="divider"/>
+            <div th:each="entry : ${affiliationById}" style="font-size:12px; margin-bottom:4px;">
+                <strong style="color:#555; text-transform:capitalize;" th:text="${entry.key}"></strong>:
+                <span th:text="${entry.value}"></span>
+            </div>
         </div>
+        <p class="no-data" style="margin-top:10px;" th:if="${affiliationById == null and param.physicianId != null}">Not found.</p>
+    </div>
 
-        <div class="card c-orange">
-            <div class="card-header">
-                <span class="badge">GET</span>
-                <span class="card-title">Get by Physician</span>
-            </div>
-            <div class="endpoint">/entity/ayan/AffiliatedWith/physician?physicianId=</div>
-
-            <form th:action="@{/entity/ayan/AffiliatedWith/searchByPhysician}" method="get">
-                <div class="form-group">
-                    <label>Physician ID</label>
-                    <input class="form-control" type="number" name="physicianId" placeholder="e.g. 1" required/>
-                </div>
-                <button class="btn" type="submit">Search</button>
-            </form>
-
-            <div th:if="${affiliationsByPhysician != null and !affiliationsByPhysician.isEmpty()}">
-                <hr/>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                        <tr><th th:each="key : ${affiliationsByPhysician[0].keySet()}" th:text="${key}"></th></tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="n : ${affiliationsByPhysician}">
-                            <td th:each="val : ${n.values()}" th:text="${val}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <p class="msg-error" th:if="${(affiliationsByPhysician == null or affiliationsByPhysician.isEmpty()) and param.physicianId != null}">Not found.</p>
+    <div class="card c3">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Get by Physician</span>
         </div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/physician?physicianId=</div>
+        <hr class="divider"/>
 
-        <div class="card c-purple">
-            <div class="card-header">
-                <span class="badge">GET</span>
-                <span class="card-title">Get by Department</span>
+        <form th:action="@{/entity/ayan/AffiliatedWith/searchByPhysician}" method="get">
+            <div class="form-group">
+                <label>Physician ID</label>
+                <input type="number" name="physicianId" placeholder="e.g. 1" required/>
             </div>
-            <div class="endpoint">/entity/ayan/AffiliatedWith/department?departmentId=</div>
+            <button class="btn" type="submit">Search</button>
+        </form>
 
-            <form th:action="@{/entity/ayan/AffiliatedWith/searchByDepartment}" method="get">
-                <div class="form-group">
-                    <label>Department ID</label>
-                    <input class="form-control" type="number" name="departmentId" placeholder="e.g. 101" required/>
-                </div>
-                <button class="btn" type="submit">Search</button>
-            </form>
-
-            <div th:if="${affiliationsByDepartment != null and !affiliationsByDepartment.isEmpty()}">
-                <hr/>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                        <tr><th th:each="key : ${affiliationsByDepartment[0].keySet()}" th:text="${key}"></th></tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="n : ${affiliationsByDepartment}">
-                            <td th:each="val : ${n.values()}" th:text="${val}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <p class="msg-error" th:if="${(affiliationsByDepartment == null or affiliationsByDepartment.isEmpty()) and param.departmentId != null}">Not found.</p>
+        <div th:if="${affiliationsByPhysician != null and !affiliationsByPhysician.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
+            <hr class="divider"/>
+            <table>
+                <thead>
+                <tr><th th:each="key : ${affiliationsByPhysician[0].keySet()}" th:text="${key}"></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="n : ${affiliationsByPhysician}">
+                    <td th:each="val : ${n.values()}" th:text="${val}"></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
+        <p class="no-data" style="margin-top:10px;" th:if="${(affiliationsByPhysician == null or affiliationsByPhysician.isEmpty()) and param.physicianId != null}">Not found.</p>
+    </div>
+</div>
 
-        <div class="card c-yellow">
-            <div class="card-header">
-                <span class="badge">POST</span>
-                <span class="card-title">Create Affiliation</span>
-            </div>
-            <div class="endpoint">/entity/ayan/AffiliatedWith/create</div>
-
-            <form th:action="@{/entity/ayan/AffiliatedWith/create}" method="post">
-                <div class="form-group">
-                    <label>Physician ID</label>
-                    <input class="form-control" type="number" name="physician" placeholder="1" required/>
-                </div>
-                <div class="form-group">
-                    <label>Department ID</label>
-                    <input class="form-control" type="number" name="department" placeholder="101" required/>
-                </div>
-                <div class="form-group">
-                    <label>Primary Affiliation (true/false)</label>
-                    <input class="form-control" type="text" name="primaryAffiliation" placeholder="true" required/>
-                </div>
-                <button class="btn" type="submit">Create</button>
-            </form>
-
-            <p class="msg-alert" th:if="${createError}" th:text="${createError}"></p>
-            <p class="msg-success" th:if="${createSuccess}" th:text="${createSuccess}"></p>
+<div class="row">
+    <div class="card c4">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Get by Department</span>
         </div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/department?departmentId=</div>
+        <hr class="divider"/>
 
-        <div class="card c-pink">
-            <div class="card-header">
-                <span class="badge">POST</span>
-                <span class="card-title">Update Affiliation</span>
+        <form th:action="@{/entity/ayan/AffiliatedWith/searchByDepartment}" method="get">
+            <div class="form-group">
+                <label>Department ID</label>
+                <input type="number" name="departmentId" placeholder="e.g. 101" required/>
             </div>
-            <div class="endpoint">/entity/ayan/AffiliatedWith/update/{physicianId}/{departmentId}</div>
+            <button class="btn" type="submit">Search</button>
+        </form>
 
-            <form th:action="@{/entity/ayan/AffiliatedWith/updateForm}" method="post">
-                <div class="form-group">
-                    <label>Physician ID (To Update)</label>
-                    <input class="form-control" type="number" name="physician" placeholder="ID to update" required/>
-                </div>
-                <div class="form-group">
-                    <label>Department ID (To Update)</label>
-                    <input class="form-control" type="number" name="department" placeholder="ID to update" required/>
-                </div>
-                <div class="form-group">
-                    <label>Primary Affiliation (true/false)</label>
-                    <input class="form-control" type="text" name="primaryAffiliation" placeholder="true or false" required/>
-                </div>
-                <button class="btn" type="submit">Update</button>
-            </form>
-
-            <p class="msg-alert" th:if="${updateError}" th:text="${updateError}"></p>
-            <p class="msg-success" th:if="${updateSuccess}" th:text="${updateSuccess}"></p>
+        <div th:if="${affiliationsByDepartment != null and !affiliationsByDepartment.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
+            <hr class="divider"/>
+            <table>
+                <thead>
+                <tr><th th:each="key : ${affiliationsByDepartment[0].keySet()}" th:text="${key}"></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="n : ${affiliationsByDepartment}">
+                    <td th:each="val : ${n.values()}" th:text="${val}"></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
+        <p class="no-data" style="margin-top:10px;" th:if="${(affiliationsByDepartment == null or affiliationsByDepartment.isEmpty()) and param.departmentId != null}">Not found.</p>
+    </div>
+
+    <div class="card c5">
+        <div class="card-header">
+            <span class="method-badge">POST</span>
+            <span class="card-title">Create Affiliation</span>
+        </div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/create</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/ayan/AffiliatedWith/create}" method="post">
+            <div class="form-group">
+                <label>Physician ID</label>
+                <input type="number" name="physician" placeholder="1" required/>
+            </div>
+            <div class="form-group">
+                <label>Department ID</label>
+                <input type="number" name="department" placeholder="101" required/>
+            </div>
+            <div class="form-group">
+                <label>Primary Affiliation (true/false)</label>
+                <input type="text" name="primaryAffiliation" placeholder="true" required/>
+            </div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+        <p class="no-data" style="margin-top:10px; color:#f84f4f;" th:if="${createError}" th:text="${createError}"></p>
+        <p class="no-data" style="margin-top:10px; color:#2db870;" th:if="${createSuccess}" th:text="${createSuccess}"></p>
+    </div>
+
+    <div class="card c6">
+        <div class="card-header">
+            <span class="method-badge">POST</span>
+            <span class="card-title">Update Affiliation</span>
+        </div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/update/{physicianId}/{departmentId}</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/ayan/AffiliatedWith/updateForm}" method="post">
+            <div class="form-group">
+                <label>Physician ID (To Update)</label>
+                <input type="number" name="physician" placeholder="ID to update" required/>
+            </div>
+            <div class="form-group">
+                <label>Department ID (To Update)</label>
+                <input type="number" name="department" placeholder="ID to update" required/>
+            </div>
+            <div class="form-group">
+                <label>Primary Affiliation (true/false)</label>
+                <input type="text" name="primaryAffiliation" placeholder="true or false" required/>
+            </div>
+            <button class="btn" type="submit">Update</button>
+        </form>
+        <p class="no-data" style="margin-top:10px; color:#f84f4f;" th:if="${updateError}" th:text="${updateError}"></p>
+        <p class="no-data" style="margin-top:10px; color:#2db870;" th:if="${updateSuccess}" th:text="${updateSuccess}"></p>
     </div>
 </div>
 
