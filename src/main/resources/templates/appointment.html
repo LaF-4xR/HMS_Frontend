@@ -69,7 +69,7 @@
             display: flex;
             justify-content: center;
             gap: 24px;
-            max-width: 1380px;
+            max-width: 1050px;
             margin: 0 auto 24px;
             flex-wrap: wrap;
         }
@@ -210,7 +210,7 @@
 </head>
 <body>
 
-<div style="max-width:1380px; margin: 0 auto;">
+<div style="max-width:1050px; margin: 0 auto;">
     <a href="/" class="back-btn">Back to Home</a>
 </div>
 
@@ -220,7 +220,7 @@
 </div>
 
 <div class="row">
-    <div class="card c1" style="width: 1360px;">
+    <div class="card c1">
         <div class="card-header">
             <span class="method-badge">GET</span>
             <span class="card-title">All Appointments</span>
@@ -230,7 +230,7 @@
 
         <p class="no-data" th:if="${appointments == null or appointments.isEmpty()}">No records found.</p>
 
-        <div th:if="${appointments != null and !appointments.isEmpty()}" style="overflow-x:auto; max-height: 320px; overflow-y:auto;">
+        <div th:if="${appointments != null and !appointments.isEmpty()}" style="overflow-x:auto; max-height: 260px; overflow-y:auto;">
             <table>
                 <thead>
                 <tr>
@@ -253,9 +253,7 @@
             </table>
         </div>
     </div>
-</div>
 
-<div class="row">
     <div class="card c2">
         <div class="card-header">
             <span class="method-badge">GET</span>
@@ -314,7 +312,9 @@
             </table>
         </div>
     </div>
+</div>
 
+<div class="row">
     <div class="card c4">
         <div class="card-header">
             <span class="method-badge">GET</span>
@@ -347,9 +347,7 @@
             </table>
         </div>
     </div>
-</div>
 
-<div class="row">
     <div class="card c5">
         <div class="card-header">
             <span class="method-badge">GET</span>
@@ -402,7 +400,9 @@
             <button class="btn" type="submit">Create</button>
         </form>
     </div>
+</div>
 
+<div class="row">
     <div class="card c7">
         <div class="card-header">
             <span class="method-badge">PUT</span>
