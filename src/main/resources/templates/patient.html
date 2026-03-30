@@ -196,13 +196,6 @@
 
         .btn:hover { opacity: 0.85; }
 
-        .btn-delete {
-            background: #f84f4f;
-            padding: 4px 12px;
-            font-size: 11px;
-            margin-top: 0;
-        }
-
         .no-data { font-size: 12px; color: #bbb; font-style: italic; }
     </style>
 </head>
@@ -233,18 +226,11 @@
                 <thead>
                 <tr>
                     <th th:each="key : ${patients[0].keySet()}" th:text="${key}"></th>
-                    <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="p : ${patients}">
                     <td th:each="val : ${p.values()}" th:text="${val}"></td>
-                    <td>
-                        <form th:action="@{/entity/anubhob/Patient/delete}" method="post">
-                            <input type="hidden" name="ssn" th:value="${p['ssn'] != null ? p['ssn'] : p.values().iterator().next()}"/>
-                            <button class="btn btn-delete" type="submit">Delete</button>
-                        </form>
-                    </td>
                 </tr>
                 </tbody>
             </table>
