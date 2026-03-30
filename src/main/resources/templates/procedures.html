@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Procedures – API Tester</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            min-height: 100vh;
+            padding: 36px 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #f87c4f, #e85d2f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 3px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #f87c4f, #e85d2f);
+            animation: slideIn 0.9s ease forwards;
+            transform-origin: left;
+        }
+
+        @keyframes slideIn {
+            from { transform: scaleX(0); }
+            to   { transform: scaleX(1); }
+        }
+
+        .header p { margin-top: 10px; font-size: 14px; color: #777; }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none; color: #555; font-size: 13px;
+            padding: 6px 16px; border: 1px solid #ccc;
+            border-radius: 20px; background: #fff;
+            margin-bottom: 24px;
+            transition: background 0.15s;
+        }
+        .back-btn:hover { background: #f0f0f0; }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            max-width: 1050px;
+            margin: 0 auto 24px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 22px 20px 20px;
+            width: 300px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+        }
+
+        .card.c1 { --c: #4fc98c; --cbg: #edfaf4; --cborder: #b2ecd1; border-top: 4px solid #4fc98c; }
+        .card.c2 { --c: #4f7ef8; --cbg: #f0f5ff; --cborder: #c5d8ff; border-top: 4px solid #4f7ef8; }
+        .card.c3 { --c: #f87c4f; --cbg: #fff4ef; --cborder: #ffd5c2; border-top: 4px solid #f87c4f; }
+        .card.c4 { --c: #a56ef8; --cbg: #f5f0ff; --cborder: #dac5ff; border-top: 4px solid #a56ef8; }
+        .card.c5 { --c: #f8c44f; --cbg: #fffbef; --cborder: #ffe9a0; border-top: 4px solid #f8c44f; }
+        .card.c6 { --c: #f84f8e; --cbg: #fff0f5; --cborder: #ffc2d9; border-top: 4px solid #f84f8e; }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .method-badge {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--cbg);
+            color: var(--c);
+            border: 1px solid var(--cborder);
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+
+        .card-endpoint {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 14px;
+            margin-top: 2px;
+        }
+
+        hr.divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin-bottom: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        th {
+            background: var(--cbg);
+            color: var(--c);
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--cborder);
+            text-transform: capitalize;
+        }
+        td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--cbg); }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            font-size: 11px;
+            color: #999;
+            text-transform: capitalize;
+        }
+        .form-group input {
+            padding: 7px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border 0.15s;
+            width: 100%;
+        }
+        .form-group input:focus { border-color: var(--c); }
+
+        .btn {
+            padding: 7px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #fff;
+            background: var(--c);
+            transition: opacity 0.15s;
+            margin-top: 4px;
+        }
+        .btn:hover { opacity: 0.85; }
+
+        .no-data { font-size: 12px; color: #bbb; font-style: italic; }
+
+        .result-box {
+            margin-top: 12px;
+            font-size: 12px;
+            background: var(--cbg);
+            border: 1px solid var(--cborder);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid var(--cborder);
+        }
+        .result-row:last-child { border-bottom: none; }
+        .result-key { color: #888; font-weight: bold; }
+        .result-val { color: #333; }
+    </style>
+</head>
+<body>
+
+<div style="max-width:1050px; margin: 0 auto;">
+    <a href="/" class="back-btn">← Back to Home</a>
+</div>
+
+<div class="header">
+    <h1>🩺 Procedures API Tester</h1>
+    <p>Test all Procedure endpoints below</p>
+</div>
+
+<!-- ROW 1: GET ALL, GET BY CODE, SEARCH BY NAME -->
+<div class="row">
+
+    <!-- CARD 1: GET ALL -->
+    <div class="card c1">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">All Procedures</span>
+        </div>
+        <div class="card-endpoint">/procedures</div>
+        <hr class="divider"/>
+
+        <p class="no-data" th:if="${procedureList == null or procedureList.isEmpty()}">No records found.</p>
+
+        <div th:if="${procedureList != null and !procedureList.isEmpty()}"
+             style="overflow-x:auto; max-height:260px; overflow-y:auto;">
+            <table>
+                <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Cost</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${procedureList}">
+                    <td th:text="${p['code']}"></td>
+                    <td th:text="${p['name']}"></td>
+                    <td th:text="${p['cost']}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- CARD 2: GET BY CODE -->
+    <div class="card c2">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Get by Code</span>
+        </div>
+        <div class="card-endpoint">/procedures/{code}</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/bidwattam/Procedures/searchById}" method="get">
+            <div class="form-group">
+                <label>Procedure Code</label>
+                <input type="number" name="code" placeholder="e.g. 1"/>
+            </div>
+            <button class="btn" type="submit">Search</button>
+        </form>
+
+        <div th:if="${procedureById != null}" class="result-box">
+            <div class="result-row"><span class="result-key">Code</span><span class="result-val" th:text="${procedureById['code']}"></span></div>
+            <div class="result-row"><span class="result-key">Name</span><span class="result-val" th:text="${procedureById['name']}"></span></div>
+            <div class="result-row"><span class="result-key">Cost</span><span class="result-val" th:text="${procedureById['cost']}"></span></div>
+        </div>
+        <p class="no-data" style="margin-top:10px;"
+           th:if="${procedureById == null and param.code != null}">Not found.</p>
+    </div>
+
+    <!-- CARD 3: SEARCH BY NAME -->
+    <div class="card c3">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Search by Name</span>
+        </div>
+        <div class="card-endpoint">/procedures/search?name=</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/bidwattam/Procedures/searchByName}" method="get">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" placeholder="e.g. Rhinoplasty"/>
+            </div>
+            <button class="btn" type="submit">Search</button>
+        </form>
+
+        <div th:if="${procedureByName != null and !procedureByName.isEmpty()}"
+             style="margin-top:12px; overflow-y:auto; max-height:160px;">
+            <hr class="divider"/>
+            <table>
+                <thead><tr><th>Code</th><th>Name</th><th>Cost</th></tr></thead>
+                <tbody>
+                <tr th:each="p : ${procedureByName}">
+                    <td th:text="${p['code']}"></td>
+                    <td th:text="${p['name']}"></td>
+                    <td th:text="${p['cost']}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- ROW 2: FILTER BY COST, CREATE, UPDATE -->
+<div class="row">
+
+    <!-- CARD 4: FILTER BY COST -->
+    <div class="card c4">
+        <div class="card-header">
+            <span class="method-badge">GET</span>
+            <span class="card-title">Filter by Cost</span>
+        </div>
+        <div class="card-endpoint">/procedures/filterByCost?min=&amp;max=</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/bidwattam/Procedures/filterByCost}" method="get">
+            <div class="form-group">
+                <label>Min Cost</label>
+                <input type="number" name="min" placeholder="e.g. 1000"/>
+            </div>
+            <div class="form-group">
+                <label>Max Cost</label>
+                <input type="number" name="max" placeholder="e.g. 5000"/>
+            </div>
+            <button class="btn" type="submit">Filter</button>
+        </form>
+
+        <div th:if="${procedureByCost != null and !procedureByCost.isEmpty()}"
+             style="margin-top:12px; overflow-y:auto; max-height:140px;">
+            <hr class="divider"/>
+            <table>
+                <thead><tr><th>Code</th><th>Name</th><th>Cost</th></tr></thead>
+                <tbody>
+                <tr th:each="p : ${procedureByCost}">
+                    <td th:text="${p['code']}"></td>
+                    <td th:text="${p['name']}"></td>
+                    <td th:text="${p['cost']}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- CARD 5: CREATE -->
+    <div class="card c5">
+        <div class="card-header">
+            <span class="method-badge">POST</span>
+            <span class="card-title">Create Procedure</span>
+        </div>
+        <div class="card-endpoint">/procedures</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/bidwattam/Procedures/create}" method="post">
+            <div class="form-group">
+                <label>Code</label>
+                <input type="number" name="code" placeholder="e.g. 8"/>
+            </div>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" placeholder="e.g. New Procedure"/>
+            </div>
+            <div class="form-group">
+                <label>Cost</label>
+                <input type="number" name="cost" placeholder="e.g. 2000"/>
+            </div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+
+    <!-- CARD 6: UPDATE -->
+    <div class="card c6">
+        <div class="card-header">
+            <span class="method-badge">PUT</span>
+            <span class="card-title">Update Procedure</span>
+        </div>
+        <div class="card-endpoint">/procedures/{code}</div>
+        <hr class="divider"/>
+
+        <form th:action="@{/entity/bidwattam/Procedures/updateForm}" method="post">
+            <div class="form-group">
+                <label>Code (key)</label>
+                <input type="number" name="code" placeholder="e.g. 1"/>
+            </div>
+            <div class="form-group">
+                <label>New Name</label>
+                <input type="text" name="name" placeholder="e.g. Updated Procedure"/>
+            </div>
+            <div class="form-group">
+                <label>New Cost</label>
+                <input type="number" name="cost" placeholder="e.g. 3000"/>
+            </div>
+            <button class="btn" type="submit">Update</button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>
