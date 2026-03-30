@@ -230,17 +230,11 @@
                 <thead>
                 <tr>
                     <th th:each="k : ${stays[0].keySet()}" th:text="${k}"></th>
-                    <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="s : ${stays}">
                     <td th:each="v : ${s.values()}" th:text="${v}"></td>
-                    <td>
-                        <a th:href="@{/entity/soumadwip/Stay/delete/{id}(id=${s['stayId']})}">
-                            <button class="btn btn-delete">Delete</button>
-                        </a>
-                    </td>
                 </tr>
                 </tbody>
             </table>
