@@ -227,17 +227,11 @@
                 <thead>
                 <tr>
                     <th th:each="key : ${physicians[0].keySet()}" th:text="${key}"></th>
-                    <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="n : ${physicians}">
                     <td th:each="val : ${n.values()}" th:text="${val}"></td>
-                    <td>
-                        <form th:action="@{|/entity/ayan/Physician/delete/${n.values().iterator().next()}|}" method="post">
-                            <button class="btn btn-delete" type="submit">Delete</button>
-                        </form>
-                    </td>
                 </tr>
                 </tbody>
             </table>
