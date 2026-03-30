@@ -42,7 +42,7 @@ public class HomeController {
         m4.put("id", "bidwattam");
         m4.put("name", "Bidwattam Datta");
         m4.put("initials", "BD");
-        m4.put("entities", Arrays.asList("Procedures", "Trained-In", "Undergoes"));
+        m4.put("entities", Arrays.asList("Procedures", "TrainedIn", "Undergoes"));
         members.add(m4);
 
         // Member 5
