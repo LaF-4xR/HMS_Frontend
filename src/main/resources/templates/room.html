@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Medication – API Tester</title>
+    <title>Room – API Tester</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -22,7 +22,7 @@
         .header h1 {
             font-size: 28px;
             font-weight: 800;
-            background: linear-gradient(90deg, #4fc98c, #2db870);
+            background: linear-gradient(90deg, #4f7ef8, #4fc98c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -37,7 +37,7 @@
             bottom: 0; left: 0;
             width: 100%; height: 3px;
             border-radius: 4px;
-            background: linear-gradient(90deg, #4fc98c, #2db870);
+            background: linear-gradient(90deg, #4f7ef8, #4fc98c);
             animation: slideIn 0.9s ease forwards;
             transform-origin: left;
         }
@@ -59,7 +59,7 @@
         }
         .back-btn:hover { background: #f0f0f0; }
 
-        /* ── Row layout same as home page ── */
+        /* ── Row layout ── */
         .row {
             display: flex;
             justify-content: center;
@@ -75,7 +75,6 @@
             border-radius: 14px;
             padding: 22px 20px 20px;
             width: 300px;
-            border-top: 4px solid #4fc98c;
             box-shadow: 0 2px 10px rgba(0,0,0,0.07);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -85,13 +84,10 @@
             box-shadow: 0 10px 24px rgba(0,0,0,0.12);
         }
 
-        /* each card gets a slightly different shade */
-        .card.c1 { --c: #4fc98c; --cbg: #edfaf4; --cborder: #b2ecd1; border-top-color: #4fc98c; }
-        .card.c2 { --c: #4f7ef8; --cbg: #f0f5ff; --cborder: #c5d8ff; border-top-color: #4f7ef8; }
-        .card.c3 { --c: #f87c4f; --cbg: #fff4ef; --cborder: #ffd5c2; border-top-color: #f87c4f; }
-        .card.c4 { --c: #a56ef8; --cbg: #f5f0ff; --cborder: #dac5ff; border-top-color: #a56ef8; }
-        .card.c5 { --c: #f8c44f; --cbg: #fffbef; --cborder: #ffe9a0; border-top-color: #f8c44f; }
-        .card.c6 { --c: #f84f8e; --cbg: #fff0f5; --cborder: #ffc2d9; border-top-color: #f84f8e; }
+        .card.c1 { --c: #4f7ef8; --cbg: #f0f5ff; --cborder: #c5d8ff; border-top: 4px solid #4f7ef8; }
+        .card.c2 { --c: #f87c4f; --cbg: #fff4ef; --cborder: #ffd5c2; border-top: 4px solid #f87c4f; }
+        .card.c3 { --c: #4fc98c; --cbg: #edfaf4; --cborder: #b2ecd1; border-top: 4px solid #4fc98c; }
+        .card.c5 { --c: #f8c44f; --cbg: #fffbef; --cborder: #ffe9a0; border-top: 4px solid #f8c44f; }
 
         .card-header {
             display: flex;
@@ -185,17 +181,27 @@
             background: var(--c);
             transition: opacity 0.15s;
             margin-top: 4px;
+            width: 100%;
         }
         .btn:hover { opacity: 0.85; }
 
-        .btn-delete {
-            background: #f84f4f;
-            padding: 4px 12px;
-            font-size: 11px;
-            margin-top: 0;
-        }
-
         .no-data { font-size: 12px; color: #bbb; font-style: italic; }
+
+        /* ── Key-value detail view ── */
+        .detail-row {
+            display: flex;
+            gap: 6px;
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 12px;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-key {
+            font-weight: bold;
+            color: var(--c);
+            min-width: 80px;
+        }
+        .detail-val { color: #333; }
     </style>
 </head>
 <body>
@@ -205,214 +211,183 @@
 </div>
 
 <div class="header">
-    <h1> Medication API Tester</h1>
-    <p>Test all Medication endpoints below</p>
+    <h1>🛏️ Room API Tester</h1>
+    <p>Test all Room endpoints below</p>
 </div>
 
-<!-- ROW 1 : 3 cards -->
+<!-- ROW : 5 cards -->
 <div class="row">
 
-    <!-- CARD 1 : GET ALL MEDICATIONS -->
+    <!-- CARD 1 : GET ALL ROOMS -->
     <div class="card c1">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">All Medications</span>
+            <span class="card-title">All Rooms</span>
         </div>
-        <div class="card-endpoint">/entity/arunima/Medication</div>
+        <div class="card-endpoint">/entity/soumadwip/Room</div>
         <hr class="divider"/>
 
-        <p class="no-data" th:if="${medications == null or medications.isEmpty()}">No records found.</p>
+        <p class="no-data" th:if="${rooms == null or rooms.isEmpty()}">No records found.</p>
 
-        <div th:if="${medications != null and !medications.isEmpty()}"
+        <div th:if="${rooms != null and !rooms.isEmpty()}"
              style="overflow-x:auto; max-height: 260px; overflow-y:auto;">
             <table>
                 <thead>
                 <tr>
-                    <th th:each="key : ${medications[0].keySet()}" th:text="${key}"></th>
-                    <th>Delete</th>
+                    <th th:each="k : ${rooms[0].keySet()}" th:text="${k}"></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="n : ${medications}">
-                    <td th:each="val : ${n.values()}" th:text="${val}"></td>
-                    <td>
-                        <form th:action="@{/entity/arunima/Medication/delete}" method="post">
-                            <input type="hidden" name="code"
-                                   th:value="${n.values().iterator().next()}"/>
-                            <button class="btn btn-delete" type="submit">Delete</button>
-                        </form>
-                    </td>
+                <tr th:each="r : ${rooms}">
+                    <td th:each="v : ${r.values()}" th:text="${v}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- CARD 2 : GET BY CODE -->
+    <!-- CARD 2 : SEARCH BY TYPE -->
     <div class="card c2">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">Get Medication by Code</span>
+            <span class="card-title">Search by Type</span>
         </div>
-        <div class="card-endpoint">/entity/arunima/Medication/{code}</div>
+        <div class="card-endpoint">/entity/soumadwip/Room/searchByType</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/arunima/Medication/searchByCode}" method="get">
+        <form th:action="@{/entity/soumadwip/Room/searchByType}" method="get">
             <div class="form-group">
-                <label>Code</label>
-                <input type="number" name="code" placeholder="e.g. 1"/>
+                <label>Room Type</label>
+                <input type="text" name="roomType" placeholder="e.g. Deluxe"/>
             </div>
             <button class="btn" type="submit">Search</button>
         </form>
 
-        <!-- result shown below if present -->
-        <div th:if="${medicationByCode != null}" style="margin-top:12px;">
-            <hr class="divider"/>
-            <div th:each="entry : ${medicationByCode}"
-                 style="font-size:12px; margin-bottom:4px;">
-                <strong style="color:#555; text-transform:capitalize;"
-                        th:text="${entry.key}"></strong>:
-                <span th:text="${entry.value}"></span>
-            </div>
-        </div>
         <p class="no-data" style="margin-top:10px;"
-           th:if="${medicationByCode == null and param.id != null}">Not found.</p>
+           th:if="${roomsByType != null and roomsByType.isEmpty()}">No results found.</p>
+
+        <div th:if="${roomsByType != null and !roomsByType.isEmpty()}"
+             style="margin-top:12px; overflow-y:auto; max-height:160px;">
+            <hr class="divider"/>
+            <table>
+                <thead>
+                <tr>
+                    <th th:each="k : ${roomsByType[0].keySet()}" th:text="${k}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${roomsByType}">
+                    <td th:each="v : ${r.values()}" th:text="${v}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- CARD 3 : GET BY NAME -->
+    <!-- CARD 3 : SEARCH BY ID -->
     <div class="card c3">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">Get Medication by Name</span>
+            <span class="card-title">Search by ID</span>
         </div>
-        <div class="card-endpoint">/entity/arunima/Medication/name?name=</div>
+        <div class="card-endpoint">/entity/soumadwip/Room/searchById</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/arunima/Medication/searchByName}" method="get">
+        <form th:action="@{/entity/soumadwip/Room/searchById}" method="get">
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" placeholder="e.g. Thesisin"/>
+                <label>Room ID</label>
+                <input type="number" name="id" placeholder="e.g. 1"/>
             </div>
             <button class="btn" type="submit">Search</button>
         </form>
 
-        <div th:if="${medicationByName != null and !medicationByName.isEmpty()}"
+        <p class="no-data" style="margin-top:10px;"
+           th:if="${roomById != null and roomById.isEmpty()}">No results found.</p>
+
+        <div th:if="${roomById != null and !roomById.isEmpty()}"
              style="margin-top:12px; overflow-y:auto; max-height:160px;">
             <hr class="divider"/>
-            <table>
-                <thead>
-                <tr>
-                    <th th:each="key : ${medicationByName[0].keySet()}"
-                        th:text="${key}"></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="n : ${medicationByName}">
-                    <td th:each="val : ${n.values()}" th:text="${val}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
-
-<!-- ROW 2 : 3 cards -->
-<div class="row">
-
-<!--    get by brand-->
-    <div class="card c4">
-        <div class="card-header">
-            <span class="method-badge">GET</span>
-            <span class="card-title">Get by Brand</span>
-        </div>
-        <div class="card-endpoint">/entity/arunima/Medication/brand?brand=</div>
-        <hr class="divider"/>
-
-        <form th:action="@{/entity/arunima/Medication/searchByBrand}" method="get">
-            <div class="form-group">
-                <label>Brand</label>
-                <input type="text" name="brand" placeholder="e.g. X"/>
+            <div th:each="entry : ${roomById.entrySet()}" class="detail-row">
+                <span class="detail-key" th:text="${entry.key}"></span>
+                <span class="detail-val" th:text="${entry.value}"></span>
             </div>
-            <button class="btn" type="submit">Search</button>
-        </form>
-
-        <div th:if="${medicationByBrand != null and !medicationByBrand.isEmpty()}"
-             style="margin-top:12px; overflow-y:auto; max-height:160px;">
-            <hr class="divider"/>
-            <table>
-                <thead>
-                <tr>
-                    <th th:each="key : ${medicationByBrand[0].keySet()}"
-                        th:text="${key}"></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="n : ${medicationByBrand}">
-                    <td th:each="val : ${n.values()}" th:text="${val}"></td>
-                </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
-<!--    create medication-->
+    <!-- CARD 4 : CREATE ROOM -->
     <div class="card c5">
         <div class="card-header">
             <span class="method-badge">POST</span>
-            <span class="card-title">Create Medication</span>
+            <span class="card-title">Create Room</span>
         </div>
-        <div class="card-endpoint">/entity/arunima/Medication/create</div>
-        <hr class="divider"/>
 
-        <form th:action="@{/entity/arunima/Medication/create}" method="post">
+        <form th:action="@{/entity/soumadwip/Room/create}" method="post">
+
             <div class="form-group">
-                <label>Code</label>
-                <input type="number" name="code" placeholder="1"/>
+                <label>Block Code</label>
+                <input type="number" name="blockCode" required>
             </div>
+
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" placeholder="Thesisin"/>
+                <label>Block Floor</label>
+                <input type="number" name="blockFloor" required>
             </div>
+
             <div class="form-group">
-                <label>Brand</label>
-                <input type="text" name="brand" placeholder="X"/>
+                <label>Room Number</label>
+                <input type="number" name="roomNumber" required>
             </div>
+
             <div class="form-group">
-                <label>Description</label>
-                <input type="text" name="description"/>
+                <label>Room Type</label>
+                <input type="text" name="roomType" required>
             </div>
-            <button class="btn" type="submit">Create</button>
+
+            <div class="form-group">
+                <label>Unavailable</label>
+                <input type="text" name="unavailable" placeholder="true / false" required>
+            </div>
+
+            <button class="btn">Create</button>
         </form>
     </div>
 
-    <!-- CARD 6 : UPDATE NURSE -->
-    <div class="card c6">
+
+    <!-- CARD 5 : UPDATE ROOM -->
+    <div class="card c5">
         <div class="card-header">
             <span class="method-badge">POST</span>
-            <span class="card-title">Update Medication</span>
+            <span class="card-title">Update Room</span>
         </div>
-        <div class="card-endpoint">/entity/arunima/Medication/update/{code}</div>
-        <hr class="divider"/>
 
-        <form th:action="@{/entity/arunima/Medication/updateForm}" method="post">
+        <form th:action="@{/entity/soumadwip/Room/update}" method="post">
+
             <div class="form-group">
-                <label>Code (to update)</label>
-                <input type="number" name="code" placeholder="Code to update"/>
+                <label>Room ID</label>
+                <input type="number" name="id" required>
             </div>
+
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" placeholder="New name"/>
+                <label>Block Code</label>
+                <input type="number" name="blockCode" required>
             </div>
+
             <div class="form-group">
-                <label>Brand</label>
-                <input type="text" name="brand" placeholder="New position"/>
+                <label>Block Floor</label>
+                <input type="number" name="blockFloor" required>
             </div>
+
             <div class="form-group">
-                <label>Description</label>
-                <input type="text" name="description" placeholder="New description"/>
+                <label>Room Type</label>
+                <input type="text" name="roomType" required>
             </div>
-            <button class="btn" type="submit">Update</button>
+
+            <div class="form-group">
+                <label>Unavailable</label>
+                <input type="text" name="unavailable" placeholder="true / false" required>
+            </div>
+
+            <button class="btn">Update</button>
         </form>
     </div>
 

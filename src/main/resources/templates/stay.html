@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Department – API Tester</title>
+    <title>Stay – API Tester</title>
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -59,7 +60,7 @@
         }
         .back-btn:hover { background: #f0f0f0; }
 
-        /* ── Row layout same as home page ── */
+        /* ── Row layout ── */
         .row {
             display: flex;
             justify-content: center;
@@ -85,7 +86,6 @@
             box-shadow: 0 10px 24px rgba(0,0,0,0.12);
         }
 
-        /* each card gets a slightly different shade */
         .card.c1 { --c: #4fc98c; --cbg: #edfaf4; --cborder: #b2ecd1; border-top-color: #4fc98c; }
         .card.c2 { --c: #4f7ef8; --cbg: #f0f5ff; --cborder: #c5d8ff; border-top-color: #4f7ef8; }
         .card.c3 { --c: #f87c4f; --cbg: #fff4ef; --cborder: #ffd5c2; border-top-color: #f87c4f; }
@@ -198,6 +198,7 @@
         .no-data { font-size: 12px; color: #bbb; font-style: italic; }
     </style>
 </head>
+
 <body>
 
 <div style="max-width:1050px; margin: 0 auto;">
@@ -205,193 +206,218 @@
 </div>
 
 <div class="header">
-    <h1>🩺 Department API Tester</h1>
-    <p>Test all Department endpoints below</p>
+    <h1>🏥 Stay API Tester</h1>
+    <p>Test all Stay endpoints below</p>
 </div>
 
+<!-- ROW 1 -->
 <div class="row">
 
+    <!-- GET ALL -->
     <div class="card c1">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">All Departments</span>
+            <span class="card-title">All Stays</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department</div>
+        <div class="card-endpoint">/entity/soumadwip/Stay</div>
         <hr class="divider"/>
 
-        <p class="no-data" th:if="${departments == null or departments.isEmpty()}">No records found.</p>
+        <p class="no-data" th:if="${stays == null or stays.isEmpty()}">No records found.</p>
 
-        <div th:if="${departments != null and !departments.isEmpty()}"
-             style="overflow-x:auto; max-height: 260px; overflow-y:auto; margin-bottom: 10px;">
+        <div th:if="${stays != null and !stays.isEmpty()}"
+             style="overflow-x:auto; max-height: 260px; overflow-y:auto;">
             <table>
                 <thead>
                 <tr>
-                    <th th:each="key : ${departments[0].keySet()}" th:text="${key}"></th>
+                    <th th:each="k : ${stays[0].keySet()}" th:text="${k}"></th>
                     <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="n : ${departments}">
-                    <td th:each="val : ${n.values()}" th:text="${val}"></td>
+                <tr th:each="s : ${stays}">
+                    <td th:each="v : ${s.values()}" th:text="${v}"></td>
                     <td>
-                        <form th:action="@{|/entity/ayan/Department/delete/${n.get('departmentId')}|}" method="post">
-                            <button class="btn btn-delete" type="submit">Delete</button>
-                        </form>
+                        <a th:href="@{/entity/soumadwip/Stay/delete/{id}(id=${s['stayId']})}">
+                            <button class="btn btn-delete">Delete</button>
+                        </a>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <p class="no-data" style="margin-bottom:10px; color:#f84f4f;" th:if="${deleteError}" th:text="${deleteError}"></p>
-        <p class="no-data" style="margin-bottom:10px; color:#2db870;" th:if="${deleteSuccess}" th:text="${deleteSuccess}"></p>
     </div>
 
+    <!-- GET BY ID -->
     <div class="card c2">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">Get Department by ID</span>
+            <span class="card-title">Get Stay by ID</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/{id}</div>
+        <div class="card-endpoint">/entity/soumadwip/Stay/{id}</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/searchById}" method="get">
+        <form th:action="@{/entity/soumadwip/Stay/searchById}">
             <div class="form-group">
-                <label>Department ID</label>
-                <input type="number" name="id" placeholder="e.g. 1" required/>
+                <label>Stay ID</label>
+                <input type="number" name="id" placeholder="e.g. 1"/>
             </div>
             <button class="btn" type="submit">Search</button>
         </form>
 
-        <div th:if="${departmentById != null}" style="margin-top:12px;">
+        <div th:if="${stayById != null}" style="margin-top:12px;">
             <hr class="divider"/>
-            <div th:each="entry : ${departmentById}" style="font-size:12px; margin-bottom:4px;">
-                <strong style="color:#555; text-transform:capitalize;" th:text="${entry.key}"></strong>:
-                <span th:text="${entry.value}"></span>
+            <div th:each="e : ${stayById}"
+                 style="font-size:12px; margin-bottom:4px;">
+                <strong style="color:#555; text-transform:capitalize;"
+                        th:text="${e.key}"></strong>:
+                <span th:text="${e.value}"></span>
             </div>
         </div>
-        <p class="no-data" style="margin-top:10px;" th:if="${departmentById == null and param.id != null}">Not found.</p>
+        <p class="no-data" style="margin-top:10px;"
+           th:if="${stayById == null and param.id != null}">Not found.</p>
     </div>
 
+    <!-- GET BY PATIENT -->
     <div class="card c3">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">Get Department by Name</span>
+            <span class="card-title">Get by Patient</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/name?name=</div>
+        <div class="card-endpoint">/entity/soumadwip/Stay/searchByPatient</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/searchByName}" method="get">
+        <form th:action="@{/entity/soumadwip/Stay/searchByPatient}">
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" placeholder="e.g. Cardiology" required/>
+                <label>Patient ID</label>
+                <input type="number" name="patientId" placeholder="e.g. 10"/>
             </div>
             <button class="btn" type="submit">Search</button>
         </form>
 
-        <div th:if="${departmentByName != null and !departmentByName.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
+        <div th:if="${stayByPatient != null and !stayByPatient.isEmpty()}"
+             style="margin-top:12px; overflow-y:auto; max-height:160px;">
             <hr class="divider"/>
             <table>
                 <thead>
-                <tr><th th:each="key : ${departmentByName[0].keySet()}" th:text="${key}"></th></tr>
+                <tr>
+                    <th th:each="k : ${stayByPatient[0].keySet()}" th:text="${k}"></th>
+                </tr>
                 </thead>
                 <tbody>
-                <tr th:each="n : ${departmentByName}">
-                    <td th:each="val : ${n.values()}" th:text="${val}"></td>
+                <tr th:each="s : ${stayByPatient}">
+                    <td th:each="v : ${s.values()}" th:text="${v}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <p class="no-data" style="margin-top:10px;" th:if="${(departmentByName == null or departmentByName.isEmpty()) and param.name != null}">Not found.</p>
     </div>
 
 </div>
 
+<!-- ROW 2 -->
 <div class="row">
 
+    <!-- GET BY ROOM -->
     <div class="card c4">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">Get by Head</span>
+            <span class="card-title">Get by Room</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/head?head=</div>
+        <div class="card-endpoint">/entity/soumadwip/Stay/searchByRoom</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/searchByHead}" method="get">
+        <form th:action="@{/entity/soumadwip/Stay/searchByRoom}">
             <div class="form-group">
-                <label>Head (Physician ID)</label>
-                <input type="number" name="head" placeholder="e.g. 101" required/>
+                <label>Room ID</label>
+                <input type="number" name="roomId" placeholder="e.g. 5"/>
             </div>
             <button class="btn" type="submit">Search</button>
         </form>
 
-        <div th:if="${departmentByHead != null and !departmentByHead.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
+        <div th:if="${stayByRoom != null and !stayByRoom.isEmpty()}"
+             style="margin-top:12px; overflow-y:auto; max-height:160px;">
             <hr class="divider"/>
             <table>
                 <thead>
-                <tr><th th:each="key : ${departmentByHead[0].keySet()}" th:text="${key}"></th></tr>
+                <tr>
+                    <th th:each="k : ${stayByRoom[0].keySet()}" th:text="${k}"></th>
+                </tr>
                 </thead>
                 <tbody>
-                <tr th:each="n : ${departmentByHead}">
-                    <td th:each="val : ${n.values()}" th:text="${val}"></td>
+                <tr th:each="s : ${stayByRoom}">
+                    <td th:each="v : ${s.values()}" th:text="${v}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <p class="no-data" style="margin-top:10px;" th:if="${(departmentByHead == null or departmentByHead.isEmpty()) and param.head != null}">Not found.</p>
     </div>
 
+    <!-- CREATE -->
     <div class="card c5">
         <div class="card-header">
             <span class="method-badge">POST</span>
-            <span class="card-title">Create Department</span>
+            <span class="card-title">Create Stay</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/create</div>
+        <div class="card-endpoint">/entity/soumadwip/Stay/create</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/create}" method="post">
+        <form th:action="@{/entity/soumadwip/Stay/create}" method="post">
             <div class="form-group">
-                <label>Department ID</label>
-                <input type="number" name="departmentId" placeholder="1" required/>
+                <label>Stay ID</label>
+                <input type="number" name="stayId" placeholder="e.g. 3000"/>
             </div>
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" placeholder="Cardiology" required/>
+                <label>Patient ID</label>
+                <input type="number" name="patientId" placeholder="e.g. 10"/>
             </div>
             <div class="form-group">
-                <label>Head (Physician ID)</label>
-                <input type="number" name="head" placeholder="101" required/>
+                <label>Room ID</label>
+                <input type="number" name="roomId" placeholder="e.g. 5"/>
+            </div>
+            <div class="form-group">
+                <label>Stay Start</label>
+                <input type="datetime-local" name="stayStart"/>
+            </div>
+            <div class="form-group">
+                <label>Stay End</label>
+                <input type="datetime-local" name="stayEnd"/>
             </div>
             <button class="btn" type="submit">Create</button>
         </form>
-        <p class="no-data" style="margin-top:10px; color:#f84f4f;" th:if="${createError}" th:text="${createError}"></p>
-        <p class="no-data" style="margin-top:10px; color:#2db870;" th:if="${createSuccess}" th:text="${createSuccess}"></p>
     </div>
 
+    <!-- UPDATE -->
     <div class="card c6">
         <div class="card-header">
             <span class="method-badge">POST</span>
-            <span class="card-title">Update Department</span>
+            <span class="card-title">Update Stay</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/update/{id}</div>
+        <div class="card-endpoint">/entity/soumadwip/Stay/updateForm</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/updateForm}" method="post">
+        <form th:action="@{/entity/soumadwip/Stay/updateForm}" method="post">
             <div class="form-group">
-                <label>Department ID (To Update)</label>
-                <input type="number" name="id" placeholder="ID to update" required/>
+                <label>Stay ID (to update)</label>
+                <input type="number" name="stayId" placeholder="ID to update"/>
             </div>
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" placeholder="New name" required/>
+                <label>Patient ID</label>
+                <input type="number" name="patientId" placeholder="e.g. 10"/>
             </div>
             <div class="form-group">
-                <label>Head (Physician ID)</label>
-                <input type="number" name="head" placeholder="New Head ID" required/>
+                <label>Room ID</label>
+                <input type="number" name="roomId" placeholder="e.g. 5"/>
+            </div>
+            <div class="form-group">
+                <label>Stay Start</label>
+                <input type="datetime-local" name="stayStart"/>
+            </div>
+            <div class="form-group">
+                <label>Stay End</label>
+                <input type="datetime-local" name="stayEnd"/>
             </div>
             <button class="btn" type="submit">Update</button>
         </form>
-        <p class="no-data" style="margin-top:10px; color:#f84f4f;" th:if="${updateError}" th:text="${updateError}"></p>
-        <p class="no-data" style="margin-top:10px; color:#2db870;" th:if="${updateSuccess}" th:text="${updateSuccess}"></p>
     </div>
 
 </div>

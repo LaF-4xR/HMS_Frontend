@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Department – API Tester</title>
+    <title>Affiliated With – API Tester</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -78,6 +78,8 @@
             border-top: 4px solid #4fc98c;
             box-shadow: 0 2px 10px rgba(0,0,0,0.07);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .card:hover {
@@ -122,6 +124,7 @@
             color: #aaa;
             margin-bottom: 14px;
             margin-top: 2px;
+            word-break: break-all;
         }
 
         hr.divider {
@@ -143,6 +146,8 @@
             text-align: left;
             border-bottom: 2px solid var(--cborder);
             text-transform: capitalize;
+            position: sticky;
+            top: 0;
         }
         td {
             padding: 7px 10px;
@@ -185,6 +190,7 @@
             background: var(--c);
             transition: opacity 0.15s;
             margin-top: 4px;
+            align-self: flex-start;
         }
         .btn:hover { opacity: 0.85; }
 
@@ -205,36 +211,34 @@
 </div>
 
 <div class="header">
-    <h1>🩺 Department API Tester</h1>
-    <p>Test all Department endpoints below</p>
+    <h1>🩺 Affiliated With API Tester</h1>
+    <p>Test all Affiliated With endpoints below</p>
 </div>
 
 <div class="row">
-
     <div class="card c1">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">All Departments</span>
+            <span class="card-title">All Affiliations</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department</div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith</div>
         <hr class="divider"/>
 
-        <p class="no-data" th:if="${departments == null or departments.isEmpty()}">No records found.</p>
+        <p class="no-data" th:if="${affiliations == null or affiliations.isEmpty()}">No records found.</p>
 
-        <div th:if="${departments != null and !departments.isEmpty()}"
-             style="overflow-x:auto; max-height: 260px; overflow-y:auto; margin-bottom: 10px;">
+        <div th:if="${affiliations != null and !affiliations.isEmpty()}" style="overflow-x:auto; max-height: 260px; overflow-y:auto; margin-bottom: 10px;">
             <table>
                 <thead>
                 <tr>
-                    <th th:each="key : ${departments[0].keySet()}" th:text="${key}"></th>
+                    <th th:each="key : ${affiliations[0].keySet()}" th:text="${key}"></th>
                     <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="n : ${departments}">
+                <tr th:each="n : ${affiliations}">
                     <td th:each="val : ${n.values()}" th:text="${val}"></td>
                     <td>
-                        <form th:action="@{|/entity/ayan/Department/delete/${n.get('departmentId')}|}" method="post">
+                        <form th:action="@{|/entity/ayan/AffiliatedWith/delete/${n.get('physician')}/${n.get('department')}|}" method="post">
                             <button class="btn btn-delete" type="submit">Delete</button>
                         </form>
                     </td>
@@ -249,117 +253,119 @@
     <div class="card c2">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">Get Department by ID</span>
+            <span class="card-title">Get by Composite ID</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/{id}</div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/{physicianId}/{departmentId}</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/searchById}" method="get">
+        <form th:action="@{/entity/ayan/AffiliatedWith/searchById}" method="get">
+            <div class="form-group">
+                <label>Physician ID</label>
+                <input type="number" name="physicianId" placeholder="e.g. 1" required/>
+            </div>
             <div class="form-group">
                 <label>Department ID</label>
-                <input type="number" name="id" placeholder="e.g. 1" required/>
+                <input type="number" name="departmentId" placeholder="e.g. 101" required/>
             </div>
             <button class="btn" type="submit">Search</button>
         </form>
 
-        <div th:if="${departmentById != null}" style="margin-top:12px;">
+        <div th:if="${affiliationById != null}" style="margin-top:12px;">
             <hr class="divider"/>
-            <div th:each="entry : ${departmentById}" style="font-size:12px; margin-bottom:4px;">
+            <div th:each="entry : ${affiliationById}" style="font-size:12px; margin-bottom:4px;">
                 <strong style="color:#555; text-transform:capitalize;" th:text="${entry.key}"></strong>:
                 <span th:text="${entry.value}"></span>
             </div>
         </div>
-        <p class="no-data" style="margin-top:10px;" th:if="${departmentById == null and param.id != null}">Not found.</p>
+        <p class="no-data" style="margin-top:10px;" th:if="${affiliationById == null and param.physicianId != null}">Not found.</p>
     </div>
 
     <div class="card c3">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">Get Department by Name</span>
+            <span class="card-title">Get by Physician</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/name?name=</div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/physician?physicianId=</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/searchByName}" method="get">
+        <form th:action="@{/entity/ayan/AffiliatedWith/searchByPhysician}" method="get">
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" placeholder="e.g. Cardiology" required/>
+                <label>Physician ID</label>
+                <input type="number" name="physicianId" placeholder="e.g. 1" required/>
             </div>
             <button class="btn" type="submit">Search</button>
         </form>
 
-        <div th:if="${departmentByName != null and !departmentByName.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
+        <div th:if="${affiliationsByPhysician != null and !affiliationsByPhysician.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
             <hr class="divider"/>
             <table>
                 <thead>
-                <tr><th th:each="key : ${departmentByName[0].keySet()}" th:text="${key}"></th></tr>
+                <tr><th th:each="key : ${affiliationsByPhysician[0].keySet()}" th:text="${key}"></th></tr>
                 </thead>
                 <tbody>
-                <tr th:each="n : ${departmentByName}">
+                <tr th:each="n : ${affiliationsByPhysician}">
                     <td th:each="val : ${n.values()}" th:text="${val}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <p class="no-data" style="margin-top:10px;" th:if="${(departmentByName == null or departmentByName.isEmpty()) and param.name != null}">Not found.</p>
+        <p class="no-data" style="margin-top:10px;" th:if="${(affiliationsByPhysician == null or affiliationsByPhysician.isEmpty()) and param.physicianId != null}">Not found.</p>
     </div>
-
 </div>
 
 <div class="row">
-
     <div class="card c4">
         <div class="card-header">
             <span class="method-badge">GET</span>
-            <span class="card-title">Get by Head</span>
+            <span class="card-title">Get by Department</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/head?head=</div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/department?departmentId=</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/searchByHead}" method="get">
+        <form th:action="@{/entity/ayan/AffiliatedWith/searchByDepartment}" method="get">
             <div class="form-group">
-                <label>Head (Physician ID)</label>
-                <input type="number" name="head" placeholder="e.g. 101" required/>
+                <label>Department ID</label>
+                <input type="number" name="departmentId" placeholder="e.g. 101" required/>
             </div>
             <button class="btn" type="submit">Search</button>
         </form>
 
-        <div th:if="${departmentByHead != null and !departmentByHead.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
+        <div th:if="${affiliationsByDepartment != null and !affiliationsByDepartment.isEmpty()}" style="margin-top:12px; overflow-y:auto; max-height:160px;">
             <hr class="divider"/>
             <table>
                 <thead>
-                <tr><th th:each="key : ${departmentByHead[0].keySet()}" th:text="${key}"></th></tr>
+                <tr><th th:each="key : ${affiliationsByDepartment[0].keySet()}" th:text="${key}"></th></tr>
                 </thead>
                 <tbody>
-                <tr th:each="n : ${departmentByHead}">
+                <tr th:each="n : ${affiliationsByDepartment}">
                     <td th:each="val : ${n.values()}" th:text="${val}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <p class="no-data" style="margin-top:10px;" th:if="${(departmentByHead == null or departmentByHead.isEmpty()) and param.head != null}">Not found.</p>
+        <p class="no-data" style="margin-top:10px;" th:if="${(affiliationsByDepartment == null or affiliationsByDepartment.isEmpty()) and param.departmentId != null}">Not found.</p>
     </div>
 
     <div class="card c5">
         <div class="card-header">
             <span class="method-badge">POST</span>
-            <span class="card-title">Create Department</span>
+            <span class="card-title">Create Affiliation</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/create</div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/create</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/create}" method="post">
+        <form th:action="@{/entity/ayan/AffiliatedWith/create}" method="post">
+            <div class="form-group">
+                <label>Physician ID</label>
+                <input type="number" name="physician" placeholder="1" required/>
+            </div>
             <div class="form-group">
                 <label>Department ID</label>
-                <input type="number" name="departmentId" placeholder="1" required/>
+                <input type="number" name="department" placeholder="101" required/>
             </div>
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" placeholder="Cardiology" required/>
-            </div>
-            <div class="form-group">
-                <label>Head (Physician ID)</label>
-                <input type="number" name="head" placeholder="101" required/>
+                <label>Primary Affiliation (true/false)</label>
+                <input type="text" name="primaryAffiliation" placeholder="true" required/>
             </div>
             <button class="btn" type="submit">Create</button>
         </form>
@@ -370,30 +376,29 @@
     <div class="card c6">
         <div class="card-header">
             <span class="method-badge">POST</span>
-            <span class="card-title">Update Department</span>
+            <span class="card-title">Update Affiliation</span>
         </div>
-        <div class="card-endpoint">/entity/ayan/Department/update/{id}</div>
+        <div class="card-endpoint">/entity/ayan/AffiliatedWith/update/{physicianId}/{departmentId}</div>
         <hr class="divider"/>
 
-        <form th:action="@{/entity/ayan/Department/updateForm}" method="post">
+        <form th:action="@{/entity/ayan/AffiliatedWith/updateForm}" method="post">
+            <div class="form-group">
+                <label>Physician ID (To Update)</label>
+                <input type="number" name="physician" placeholder="ID to update" required/>
+            </div>
             <div class="form-group">
                 <label>Department ID (To Update)</label>
-                <input type="number" name="id" placeholder="ID to update" required/>
+                <input type="number" name="department" placeholder="ID to update" required/>
             </div>
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" placeholder="New name" required/>
-            </div>
-            <div class="form-group">
-                <label>Head (Physician ID)</label>
-                <input type="number" name="head" placeholder="New Head ID" required/>
+                <label>Primary Affiliation (true/false)</label>
+                <input type="text" name="primaryAffiliation" placeholder="true or false" required/>
             </div>
             <button class="btn" type="submit">Update</button>
         </form>
         <p class="no-data" style="margin-top:10px; color:#f84f4f;" th:if="${updateError}" th:text="${updateError}"></p>
         <p class="no-data" style="margin-top:10px; color:#2db870;" th:if="${updateSuccess}" th:text="${updateSuccess}"></p>
     </div>
-
 </div>
 
 </body>
