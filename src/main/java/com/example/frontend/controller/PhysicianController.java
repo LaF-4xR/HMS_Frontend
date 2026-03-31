@@ -18,76 +18,80 @@ public class PhysicianController {
         this.physicianService = physicianService;
     }
 
-    @GetMapping
-    public String physicianPage(Model model){
-        model.addAttribute("physicians", physicianService.getAllPhysicians());
-        return "physician";
+    // Main Hub (The card grid)
+    @GetMapping("")
+    public String physicianPage(){
+        return "physician/physician";
     }
 
-    // Search by ID
+    // 1. Get All Physicians
+    @GetMapping("/all")
+    public String getAllPhysicians(Model model) {
+        model.addAttribute("physicians", physicianService.getAllPhysicians());
+        return "physician/all-physicians";
+    }
+
+    // 2. Search by ID
     @GetMapping("/searchById")
-    public String searchById(@RequestParam int id, Model model) {
-        model.addAttribute("physicians", physicianService.getAllPhysicians());
-        model.addAttribute("physicianById", physicianService.getPhysicianById(id));
-        return "physician";
+    public String searchById(@RequestParam(required = false) Integer id, Model model) {
+        if (id != null) {
+            model.addAttribute("physicianById", physicianService.getPhysicianById(id));
+        }
+        return "physician/physician-id";
     }
 
-    // Search by Name
+    // 3. Search by Name
     @GetMapping("/searchByName")
-    public String searchByName(@RequestParam String name, Model model) {
-        model.addAttribute("physicians", physicianService.getAllPhysicians());
-        model.addAttribute("physicianByName", physicianService.getPhysicianByName(name));
-        return "physician";
+    public String searchByName(@RequestParam(required = false) String name, Model model) {
+        if (name != null && !name.isEmpty()) {
+            model.addAttribute("physicianByName", physicianService.getPhysicianByName(name));
+        }
+        return "physician/physician-name";
     }
 
-    // Search by Position
+    // 4. Search by Position
     @GetMapping("/searchByPosition")
-    public String searchByPosition(@RequestParam String position, Model model) {
-        model.addAttribute("physicians", physicianService.getAllPhysicians());
-        model.addAttribute("physicianByPosition", physicianService.getPhysicianByPosition(position));
-        return "physician";
+    public String searchByPosition(@RequestParam(required = false) String position, Model model) {
+        if (position != null && !position.isEmpty()) {
+            model.addAttribute("physicianByPosition", physicianService.getPhysicianByPosition(position));
+        }
+        return "physician/physician-position";
     }
 
-    // Create physician
+    // 5. Create Form & Action
+    @GetMapping("/createForm")
+    public String showCreateForm() {
+        return "physician/physician-create";
+    }
+
     @PostMapping("/create")
     public String createPhysician(@RequestParam Map<String, Object> physician, RedirectAttributes redirectAttributes){
         Map result = physicianService.createPhysician(physician);
         if (result == null) {
-            redirectAttributes.addFlashAttribute("createError", "Create failed. Please check inputs.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Create failed. Please check inputs.");
         } else {
-            redirectAttributes.addFlashAttribute("createSuccess", "Physician created successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Physician created successfully!");
         }
-        return "redirect:/entity/ayan/Physician";
+        return "redirect:/entity/ayan/Physician/createForm";
     }
 
-    // Update form handler
+    // 6. Update Form & Action
+    @GetMapping("/updateFormPage")
+    public String showUpdateForm() {
+        return "physician/physician-update";
+    }
+
     @PostMapping("/updateForm")
-    public String updateForm(@RequestParam int id,
-                             @RequestParam Map<String, Object> body,
-                             RedirectAttributes redirectAttributes) {
+    public String processUpdate(@RequestParam int id, @RequestParam Map<String, Object> body, RedirectAttributes redirectAttributes) {
         body.remove("id");
         Map existing = physicianService.getPhysicianById(id);
 
         if (existing == null) {
-            redirectAttributes.addFlashAttribute("updateError", "Update failed: ID " + id + " not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Update failed: ID " + id + " not found.");
         } else {
             physicianService.updatePhysician(id, body);
-            redirectAttributes.addFlashAttribute("updateSuccess", "Physician updated successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Physician ID " + id + " updated successfully!");
         }
-        return "redirect:/entity/ayan/Physician";
-    }
-
-    // Delete physician handler
-    @PostMapping("/delete/{id}")
-    public String deletePhysician(@PathVariable int id, RedirectAttributes redirectAttributes) {
-        Map existing = physicianService.getPhysicianById(id);
-
-        if (existing == null) {
-            redirectAttributes.addFlashAttribute("deleteError", "Delete failed: ID " + id + " not found.");
-        } else {
-            physicianService.deletePhysician(id);
-            redirectAttributes.addFlashAttribute("deleteSuccess", "Physician deleted successfully.");
-        }
-        return "redirect:/entity/ayan/Physician";
+        return "redirect:/entity/ayan/Physician/updateFormPage";
     }
 }

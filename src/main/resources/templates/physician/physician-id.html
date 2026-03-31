@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Find Physician by ID</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --bg: #f0f4f8; --card-bg: #ffffff; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+    body { font-family: var(--font); background: var(--bg); padding: 40px 24px; color: #111; }
+    .topbar { max-width: 800px; margin: 0 auto 28px; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #555; font-size: 13px; padding: 6px 16px; border: 1px solid #ddd; border-radius: 20px; background: #fff; }
+    .page-header { max-width: 800px; margin: 0 auto 28px; }
+    .badge { font-family: var(--mono); font-size: 11px; padding: 4px 14px; border-radius: 8px; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; text-transform: uppercase; }
+    .content-card { max-width: 800px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 2px 16px rgba(0,0,0,0.07); overflow: hidden; }
+    .search-bar { padding: 24px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-end; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; }
+    .form-group input { padding: 10px; border: 1.5px solid #e5e7eb; border-radius: 10px; outline: none; width: 250px; }
+    .btn { padding: 10px 24px; border: none; border-radius: 10px; background: #22c55e; color: #fff; font-weight: 600; cursor: pointer; }
+    .record-detail { padding: 24px; }
+    .field-row { display: flex; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+    .field-key { font-size: 11px; font-weight: 700; color: #999; width: 140px; text-transform: uppercase; }
+    .field-val { font-family: var(--mono); font-size: 14px; }
+  </style>
+</head>
+<body>
+<div class="topbar"><a href="/entity/ayan/Physician" class="back-btn">← Back</a></div>
+<div class="page-header">
+  <span class="badge">GET</span>
+  <h2 style="margin-top:8px;">Search Physician by ID</h2>
+</div>
+<div class="content-card">
+  <form th:action="@{/entity/ayan/Physician/searchById}" method="get" class="search-bar">
+    <div class="form-group">
+      <label>Employee ID</label>
+      <input type="number" name="id" placeholder="e.g. 101" required/>
+    </div>
+    <button class="btn" type="submit">Lookup</button>
+  </form>
+  <div th:if="${physicianById != null}" class="record-detail">
+    <div class="field-row" th:each="entry : ${physicianById}">
+      <span class="field-key" th:text="${entry.key}"></span>
+      <span class="field-val" th:text="${entry.value}"></span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
