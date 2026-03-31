@@ -4,6 +4,7 @@ import com.example.frontend.service.OnCallService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 
@@ -17,42 +18,53 @@ public class OnCallController {
         this.onCallService = onCallService;
     }
 
-    // GET ALL
-    @GetMapping
-    public String page(Model model) {
-        model.addAttribute("oncalls", onCallService.getAllOnCall());
-        return "oncall";
+    @GetMapping("")
+    public String mainPage() {
+        return "oncall/oncall";
     }
 
-    // SEARCH BY NURSE
-    @GetMapping("/searchByNurse")
-    public String searchByNurse(@RequestParam int id, Model model) {
+    @GetMapping("/all")
+    public String allOnCalls(Model model) {
         model.addAttribute("oncalls", onCallService.getAllOnCall());
-        model.addAttribute("oncallByNurse", onCallService.getByNurse(id));
-        return "oncall";
+        return "oncall/oncall-all";
+    }
+
+    @GetMapping("/searchByNurse")
+    public String searchByNurse(@RequestParam(required = false) Integer id, Model model) {
+        if (id != null) {
+            model.addAttribute("oncallByNurse", onCallService.getByNurse(id));
+        }
+        return "oncall/oncall-nurse";
     }
 
     @GetMapping("/searchByFloor")
-    public String searchByFloor(@RequestParam int blockFloor, Model model) {
-        model.addAttribute("oncalls", onCallService.getAllOnCall());
-        model.addAttribute("oncallByFloor", onCallService.getBlocksByFloor(blockFloor));
-        return "oncall";
+    public String searchByFloor(@RequestParam(required = false) Integer blockFloor, Model model) {
+        if (blockFloor != null) {
+            model.addAttribute("oncallByFloor", onCallService.getBlocksByFloor(blockFloor));
+        }
+        return "oncall/oncall-floor";
     }
 
     @GetMapping("/searchByCode")
-    public String searchByCode(@RequestParam int blockCode, Model model) {
-        model.addAttribute("oncalls", onCallService.getAllOnCall());
-        model.addAttribute("oncallByCode", onCallService.getBlocksByCode(blockCode));
-        return "oncall";
+    public String searchByCode(@RequestParam(required = false) Integer blockCode, Model model) {
+        if (blockCode != null) {
+            model.addAttribute("oncallByCode", onCallService.getBlocksByCode(blockCode));
+        }
+        return "oncall/oncall-code";
     }
 
-    //create
+    @GetMapping("/createForm")
+    public String createForm() {
+        return "oncall/oncall-create";
+    }
+
     @PostMapping("/create")
     public String create(@RequestParam int nurseId,
-                         @RequestParam int blockFloor,   // ← from form now
-                         @RequestParam int blockCode,    // ← from form now
+                         @RequestParam int blockFloor,
+                         @RequestParam int blockCode,
                          @RequestParam String startTime,
-                         @RequestParam String endTime) {
+                         @RequestParam String endTime,
+                         RedirectAttributes ra) {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("nurseId", nurseId);
@@ -61,9 +73,9 @@ public class OnCallController {
         body.put("onCallStart", startTime);
         body.put("onCallEnd", endTime);
 
-        System.out.println("BODY: " + body);
         onCallService.createOnCall(body);
+        ra.addFlashAttribute("successMessage", "On-Call schedule created successfully for Nurse ID: " + nurseId);
 
-        return "redirect:/entity/arunima/On-Call";
+        return "redirect:/entity/arunima/On-Call/createForm";
     }
 }

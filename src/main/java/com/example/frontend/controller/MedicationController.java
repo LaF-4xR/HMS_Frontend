@@ -4,6 +4,7 @@ import com.example.frontend.service.MedicationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -17,62 +18,69 @@ public class MedicationController {
         this.medicationService = medicationService;
     }
 
-    @GetMapping
-    public String MedicationPage(Model model){
-        model.addAttribute("medications", medicationService.getAllMedication());
-        return "medication";
+    @GetMapping("")
+    public String medicationPage() {
+        return "medication/medication";
     }
 
-    // Search by Code
+    // VIEW ALL
+    @GetMapping("/all")
+    public String allMedications(Model model) {
+        model.addAttribute("medications", medicationService.getAllMedication());
+        return "medication/medication-all";
+    }
+
+    // SEARCH BY CODE
     @GetMapping("/searchByCode")
-    public String searchByCode(@RequestParam int code, Model model) {
-        model.addAttribute("medications", medicationService.getAllMedication());
-        model.addAttribute("medicationByCode", medicationService.getMedicationByCode(code));
-        return "medication";
+    public String searchByCode(@RequestParam(required = false) Integer code, Model model) {
+        if (code != null) {
+            model.addAttribute("medicationByCode", medicationService.getMedicationByCode(code));
+        }
+        return "medication/medication-code";
     }
 
-    // Search by Name
+    // SEARCH BY NAME
     @GetMapping("/searchByName")
-    public String searchByName(@RequestParam String name, Model model) {
-        model.addAttribute("medications", medicationService.getAllMedication());
-        model.addAttribute("medicationByName", medicationService.getMedicationByName(name));
-        return "medication";
+    public String searchByName(@RequestParam(required = false) String name, Model model) {
+        if (name != null && !name.isEmpty()) {
+            model.addAttribute("medicationByName", medicationService.getMedicationByName(name));
+        }
+        return "medication/medication-name";
     }
 
-    //search by brand
+    // SEARCH BY BRAND
     @GetMapping("/searchByBrand")
-    public String searchByBrand(@RequestParam String brand, Model model) {
-        model.addAttribute("medications", medicationService.getAllMedication());
-        model.addAttribute("medicationByBrand", medicationService.getMedicationByBrand(brand));
-        return "medication";
+    public String searchByBrand(@RequestParam(required = false) String brand, Model model) {
+        if (brand != null && !brand.isEmpty()) {
+            model.addAttribute("medicationByBrand", medicationService.getMedicationByBrand(brand));
+        }
+        return "medication/medication-brand";
     }
 
-    // Create medication
+    // CREATE FORM
+    @GetMapping("/createForm")
+    public String createForm() {
+        return "medication/medication-create";
+    }
+
     @PostMapping("/create")
-    public String createMedication(@RequestParam Map<String, Object> medication){
-
-//        if (medication.get("registered") != null) {
-//            String val = medication.get("registered").toString();
-//            medication.put("registered", val.equalsIgnoreCase("true") ? 1 : 0);
-//        }
-
+    public String createMedication(@RequestParam Map<String, Object> medication, RedirectAttributes ra){
         medicationService.createMedication(medication);
-        return "redirect:/entity/arunima/Medication";
+        ra.addFlashAttribute("successMessage", "Medication added to inventory successfully.");
+        return "redirect:/entity/arunima/Medication/createForm";
     }
 
-    // Update medication
-    @PostMapping("/update/{code}")
-    public String updateMedication(@PathVariable int code, @RequestParam Map<String, Object> medication){
-        medicationService.updateMedication(code, medication);
-        return "redirect:/entity/arunima/Medication";
+    // UPDATE FORM
+    @GetMapping("/updateFormPage")
+    public String updateFormPage() {
+        return "medication/medication-update";
     }
 
-    // Update form handler
     @PostMapping("/updateForm")
-    public String updateForm(@RequestParam int code,
-                             @RequestParam Map<String, Object> body) {
+    public String updateForm(@RequestParam int code, @RequestParam Map<String, Object> body, RedirectAttributes ra) {
         body.remove("code");
         medicationService.updateMedication(code, body);
-        return "redirect:/entity/arunima/Medication";
+        ra.addFlashAttribute("successMessage", "Medication code " + code + " has been updated.");
+        return "redirect:/entity/arunima/Medication/updateFormPage";
     }
 }

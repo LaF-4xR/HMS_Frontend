@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>On-Call Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-hover: 0 10px 20px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --font: 'DM Sans', sans-serif;
+            --mono: 'DM Mono', monospace;
+        }
+        body { font-family: var(--font); background: var(--bg); padding: 48px 24px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 32px; font-weight: 700; color: #111; }
+        .header h1 span { background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .header p { margin-top: 8px; font-size: 14px; color: #888; }
+        .top-nav { max-width: 1000px; margin: 0 auto 32px; }
+        .back-btn { text-decoration: none; color: #64748b; font-size: 13px; padding: 6px 16px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+        .section-label { max-width: 1000px; margin: 32px auto 12px; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .grid { display: flex; flex-direction: column; gap: 12px; max-width: 1000px; margin: 0 auto; }
+        .card { background: var(--card-bg); border-radius: var(--radius); padding: 18px 24px; box-shadow: var(--shadow); border-left: 4px solid var(--c); text-decoration: none; color: inherit; display: flex; align-items: center; gap: 24px; transition: all 0.2s ease; }
+        .card:hover { transform: translateX(8px); box-shadow: var(--shadow-hover); border-left-width: 8px; }
+        .card.get  { --c: #22c55e; --cbg: #f0fdf4; --ct: #16a34a; }
+        .card.post { --c: #3b82f6; --cbg: #eff6ff; --ct: #1d4ed8; }
+        .badge { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--cbg); color: var(--ct); text-transform: uppercase; margin-right: 8px; }
+        .card-info { flex: 0 0 280px; }
+        .card-title { font-size: 15px; font-weight: 700; color: #1e293b; display: block; margin-bottom: 2px; }
+        .card-path { font-family: var(--mono); font-size: 11px; color: #94a3b8; }
+        .card-desc { flex: 1; font-size: 13.5px; color: #64748b; line-height: 1.4; border-left: 1px solid #f1f5f9; padding-left: 24px; }
+        .card-arrow { font-size: 18px; color: #cbd5e1; transition: transform 0.2s; }
+        .card:hover .card-arrow { color: var(--c); transform: translateX(4px); }
+    </style>
+</head>
+<body>
+<div class="top-nav"><a href="/" class="back-btn">← Home</a></div>
+<header class="header">
+    <h1><span>On-Call</span> Schedules</h1>
+    <p>Monitor staffing levels and hospital floor assignments</p>
+</header>
+<div class="section-label" style="margin-top:0;">Read / Retrieval</div>
+<div class="grid">
+    <a class="card get" th:href="@{/entity/arunima/On-Call/all}">
+        <div class="card-info">
+            <div><span class="badge">GET</span><span class="card-title">View All On-Calls</span></div>
+            <div class="card-path">/On-Call/all</div>
+        </div>
+        <div class="card-desc">Retrieve the complete master list of all current assignments.</div>
+        <span class="card-arrow">→</span>
+    </a>
+    <a class="card get" th:href="@{/entity/arunima/On-Call/searchByNurse}">
+        <div class="card-info">
+            <div><span class="badge">GET</span><span class="card-title">Filter by Nurse</span></div>
+            <div class="card-path">/On-Call/nurse/{id}</div>
+        </div>
+        <div class="card-desc">Find all assignments for a specific nurse using Employee ID.</div>
+        <span class="card-arrow">→</span>
+    </a>
+    <a class="card get" th:href="@{/entity/arunima/On-Call/searchByFloor}">
+        <div class="card-info">
+            <div><span class="badge">GET</span><span class="card-title">Filter by Floor</span></div>
+            <div class="card-path">/On-Call/floor/{num}</div>
+        </div>
+        <div class="card-desc">Monitor staffing levels for a specific hospital floor or ward.</div>
+        <span class="card-arrow">→</span>
+    </a>
+    <a class="card get" th:href="@{/entity/arunima/On-Call/searchByCode}">
+        <div class="card-info">
+            <div><span class="badge">GET</span><span class="card-title">Filter by Block</span></div>
+            <div class="card-path">/On-Call/block/{code}</div>
+        </div>
+        <div class="card-desc">Check on-call records for specific room blocks.</div>
+        <span class="card-arrow">→</span>
+    </a>
+</div>
+<div class="section-label">Write / Management</div>
+<div class="grid">
+    <a class="card post" th:href="@{/entity/arunima/On-Call/createForm}">
+        <div class="card-info">
+            <div><span class="badge">POST</span><span class="card-title">Assign On-Call</span></div>
+            <div class="card-path">/On-Call/create</div>
+        </div>
+        <div class="card-desc">Schedule a nurse to a specific floor and block.</div>
+        <span class="card-arrow">→</span>
+    </a>
+</div>
+</body>
+</html>

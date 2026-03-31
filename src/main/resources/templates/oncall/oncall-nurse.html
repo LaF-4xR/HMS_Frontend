@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Search by Nurse ID</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --bg: #f0f4f8; --card-bg: #ffffff; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; color: #1e293b; }
+        .topbar { max-width: 1000px; margin: 0 auto 28px; }
+        .back-btn { text-decoration: none; color: #64748b; font-size: 13px; padding: 8px 18px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+        .content-card { max-width: 1000px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
+        .search-bar { padding: 32px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-end; gap: 12px; background: #fafbfc; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .form-group input { padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; width: 280px; }
+        .btn { padding: 12px 28px; border: none; border-radius: 10px; background: #22c55e; color: #fff; font-weight: 600; cursor: pointer; }
+        .mono-text { font-family: var(--mono); font-size: 13px; }
+        table.dataTable thead th { background: #f8fafc!important; font-size: 11px!important; text-transform: uppercase!important; color: #64748b!important; }
+    </style>
+</head>
+<body>
+<div class="topbar"><a th:href="@{/entity/arunima/On-Call}" class="back-btn">← Back</a></div>
+<div class="content-card">
+    <form th:action="@{/entity/arunima/On-Call/searchByNurse}" method="get" class="search-bar">
+        <div class="form-group">
+            <label>Nurse Employee ID</label>
+            <input type="number" name="id" placeholder="Enter ID" th:value="${param.id}" required/>
+        </div>
+        <button class="btn" type="submit">Lookup</button>
+    </form>
+
+    <div th:if="${oncallByNurse != null}" style="padding: 24px;">
+        <table id="nurseTable" class="display" style="width:100%">
+            <thead>
+            <tr>
+                <th>Nurse ID</th>
+                <th>Floor</th>
+                <th>Block</th>
+                <th>Start</th>
+                <th>End</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="oc : ${oncallByNurse}">
+                <td class="mono-text" th:text="${oc.nurseId}"></td>
+                <td th:text="${oc.blockFloor}"></td>
+                <td class="mono-text" th:text="${oc.blockCode}"></td>
+                <td th:text="${oc.onCallStart}"></td>
+                <td th:text="${oc.onCallEnd}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${#lists.isEmpty(oncallByNurse)}" style="text-align: center; color: #94a3b8; padding: 20px;">
+            No on-call schedules found for Nurse ID <span th:text="${param.id}"></span>.
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() { if ($('#nurseTable tbody tr').length > 0) $('#nurseTable').DataTable(); });
+</script>
+</body>
+</html>

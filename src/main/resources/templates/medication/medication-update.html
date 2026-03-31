@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Update Medication</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --bg: #f0f4f8; --font: 'DM Sans', sans-serif; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; }
+        .content-card { max-width: 500px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 24px; }
+        label { display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; }
+        .btn-update { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
+        .banner { background: #eff6ff; color: #1d4ed8; padding: 14px; border-radius: 10px; text-align: center; margin-bottom: 24px; border: 1px solid #bfdbfe; }
+    </style>
+</head>
+<body>
+<div class="content-card">
+    <a th:href="@{/entity/arunima/Medication}" style="text-decoration:none; color:#64748b; font-size:13px;">← Back</a>
+    <h2 style="margin: 24px 0;">Update Existing Record</h2>
+    <div th:if="${successMessage}" class="banner" th:text="${successMessage}"></div>
+    <form th:action="@{/entity/arunima/Medication/updateForm}" method="post">
+        <div class="form-group"><label>Code (Target to Update)</label><input type="number" name="code" required/></div>
+        <div class="form-group"><label>New Name</label><input type="text" name="name" placeholder="Leave blank to skip"/></div>
+        <div class="form-group"><label>New Brand</label><input type="text" name="brand" placeholder="Leave blank to skip"/></div>
+        <div class="form-group"><label>New Description</label><input type="text" name="description" placeholder="Leave blank to skip"/></div>
+        <button type="submit" class="btn-update">Save Changes</button>
+    </form>
+</div>
+</body>
+</html>

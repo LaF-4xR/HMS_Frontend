@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>All On-Call Records</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --bg: #f0f4f8; --card-bg: #ffffff; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; color: #1e293b; }
+        .topbar { max-width: 1100px; margin: 0 auto 28px; }
+        .back-btn { text-decoration: none; color: #64748b; font-size: 13px; padding: 8px 18px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+        .page-header { max-width: 1100px; margin: 0 auto 28px; }
+        .badge { font-family: var(--mono); font-size: 11px; padding: 4px 12px; border-radius: 8px; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; text-transform: uppercase; }
+        .content-card { max-width: 1100px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 24px; }
+
+        table.dataTable thead th { background: #f8fafc!important; color: #64748b!important; font-size: 11px!important; text-transform: uppercase!important; letter-spacing: 0.05em!important; border-bottom: 1px solid #e2e8f0!important; padding: 14px 20px!important; }
+        .mono-text { font-family: var(--mono); font-size: 13px; color: #475569; }
+    </style>
+</head>
+<body>
+<div class="topbar"><a th:href="@{/entity/arunima/On-Call}" class="back-btn">← Back</a></div>
+<div class="page-header">
+    <span class="badge">GET</span>
+    <h2 style="margin-top:8px;">All On-Call Records</h2>
+</div>
+<div class="content-card">
+    <table id="oncallTable" class="display" style="width:100%">
+        <thead>
+        <tr>
+            <th>Nurse ID</th>
+            <th>Floor</th>
+            <th>Block Code</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="oc : ${oncalls}">
+            <td class="mono-text" th:text="${oc.nurseId}"></td>
+            <td th:text="${oc.blockFloor}"></td>
+            <td class="mono-text" th:text="${oc.blockCode}"></td>
+            <td th:text="${oc.onCallStart}"></td>
+            <td th:text="${oc.onCallEnd}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function() { $('#oncallTable').DataTable({ "pageLength": 10 }); });
+</script>
+</body>
+</html>

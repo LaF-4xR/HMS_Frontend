@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create On-Call Schedule</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --bg: #f0f4f8; --card-bg: #ffffff; --radius: 16px; --font: 'DM Sans', sans-serif; --orange: #f59e0b; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; }
+        .topbar { max-width: 600px; margin: 0 auto 28px; }
+        .back-btn { text-decoration: none; color: #555; font-size: 13px; padding: 8px 16px; border: 1px solid #ddd; border-radius: 20px; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+        .page-header { max-width: 600px; margin: 0 auto 28px; }
+        .badge-post { background: #fffbeb; color: #d97706; border: 1px solid #fef3c7; padding: 4px 12px; border-radius: 8px; font-family: 'DM Mono'; font-size: 11px; }
+        .content-card { max-width: 600px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 32px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .form-group input { padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-family: var(--font); }
+        .full-width { grid-column: span 2; }
+        .btn-post { background: var(--orange); color: white; padding: 14px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; margin-top: 10px; }
+        .success-msg { color: #15803d; background: #f0fdf4; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; border: 1px solid #bbf7d0; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="topbar"><a th:href="@{/entity/arunima/On-Call}" class="back-btn">← Back</a></div>
+<div class="page-header">
+    <span class="badge-post">POST</span>
+    <h2 style="margin-top:8px;">New On-Call Schedule</h2>
+</div>
+<div class="content-card">
+    <div th:if="${successMessage}" class="success-msg" th:text="${successMessage}"></div>
+    <form th:action="@{/entity/arunima/On-Call/create}" method="post" class="form-grid">
+        <div class="form-group full-width">
+            <label>Nurse Employee ID</label>
+            <input type="number" name="nurseId" placeholder="e.g. 101" required/>
+        </div>
+        <div class="form-group">
+            <label>Block Floor</label>
+            <input type="number" name="blockFloor" placeholder="e.g. 2" required/>
+        </div>
+        <div class="form-group">
+            <label>Block Code</label>
+            <input type="number" name="blockCode" placeholder="e.g. 50" required/>
+        </div>
+        <div class="form-group">
+            <label>Start Time</label>
+            <input type="datetime-local" name="startTime" required/>
+        </div>
+        <div class="form-group">
+            <label>End Time</label>
+            <input type="datetime-local" name="endTime" required/>
+        </div>
+        <button type="submit" class="btn-post full-width">Confirm Schedule</button>
+    </form>
+</div>
+</body>
+</html>

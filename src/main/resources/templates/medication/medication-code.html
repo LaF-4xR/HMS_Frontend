@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Search Medication</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --bg: #f0f4f8; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; }
+        .content-card { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .search-form { display: flex; gap: 10px; margin-bottom: 24px; }
+        input { flex: 1; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; outline: none; }
+        button { padding: 12px 24px; background: #22c55e; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .detail-row { display: flex; padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
+        .label { width: 120px; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .value { font-family: var(--mono); color: #1e293b; }
+    </style>
+</head>
+<body>
+<div class="content-card">
+    <a th:href="@{/entity/arunima/Medication}" style="text-decoration:none; color:#64748b; font-size:13px;">← Back</a>
+    <h2 style="margin: 16px 0 24px;">Search by Code</h2>
+    <form th:action="@{/entity/arunima/Medication/searchByCode}" class="search-form">
+        <input type="number" name="code" placeholder="Enter Medication Code" required th:value="${param.code}">
+        <button type="submit">Lookup</button>
+    </form>
+    <div th:if="${medicationByCode != null}">
+        <div th:each="entry : ${medicationByCode}" class="detail-row">
+            <div class="label" th:text="${entry.key}">Label</div>
+            <div class="value" th:text="${entry.value}">Value</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
