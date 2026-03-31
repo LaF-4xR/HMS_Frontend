@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Find Undergoes by Stay</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg: #f0f4f8; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; --green: #16a34a; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; color: #1e293b; }
+        .topbar { max-width: 1000px; margin: 0 auto 28px; }
+        .back-btn { text-decoration: none; color: #64748b; font-size: 13px; padding: 8px 18px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+        .page-header { max-width: 1000px; margin: 0 auto 28px; }
+        .badge { font-family: var(--mono); font-size: 11px; padding: 4px 12px; border-radius: 8px; background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; text-transform: uppercase; }
+        .content-card { max-width: 1000px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
+        .search-bar { padding: 32px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-end; gap: 12px; background: #fafbfc; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .form-group input { padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; outline: none; width: 280px; font-family: var(--font); }
+        .form-group input:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.1); }
+        .btn { padding: 12px 28px; border: none; border-radius: 10px; background: #22c55e; color: #fff; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .dataTables_wrapper { padding: 24px; font-family: var(--font); }
+        table.dataTable thead th { background: #f8fafc !important; color: #64748b !important; font-size: 11px !important; text-transform: uppercase !important; border-bottom: 1px solid #e2e8f0 !important; padding: 14px 20px !important; }
+        table.dataTable tbody td { padding: 14px 20px !important; border-bottom: 1px solid #f1f5f9 !important; font-size: 14px; }
+        .mono-text { font-family: var(--mono); font-size: 13px; color: #475569; }
+    </style>
+</head>
+<body>
+
+<div class="topbar"><a th:href="@{/entity/bidwattam/Undergoes}" class="back-btn">← Back</a></div>
+
+<div class="page-header">
+    <span class="badge">GET</span>
+    <h2 style="margin-top:8px;">Search Undergoes by Stay</h2>
+    <p style="color: #94a3b8; font-family: var(--mono); font-size: 12px; margin-top: 4px;">/entity/bidwattam/Undergoes/stay/{id}</p>
+</div>
+
+<div class="content-card">
+    <form th:action="@{/entity/bidwattam/Undergoes/searchByStay}" method="get" class="search-bar">
+        <div class="form-group">
+            <label>Stay ID</label>
+            <input type="number" name="stayId" placeholder="e.g. 3215" th:value="${param.stayId}" required/>
+        </div>
+        <button class="btn" type="submit">Lookup</button>
+    </form>
+
+    <div th:if="${undergoesByStay != null}">
+        <table id="undergoesTable" class="display" style="width:100%">
+            <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Procedure</th>
+                <th>Stay</th>
+                <th>Date Undergoes</th>
+                <th>Physician</th>
+                <th>Assisting Nurse</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${undergoesByStay}">
+                <td class="mono-text" th:text="${u['patient']}"></td>
+                <td class="mono-text" th:text="${u['procedure']}"></td>
+                <td class="mono-text" th:text="${u['stay']}"></td>
+                <td th:text="${u['dateUndergoes']}"></td>
+                <td class="mono-text" th:text="${u['physician']}"></td>
+                <td class="mono-text" th:text="${u['assistingNurse']}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${#lists.isEmpty(undergoesByStay)}" style="padding: 40px; text-align: center; color: #94a3b8;">
+            No records found for Stay ID: <strong th:text="${param.stayId}"></strong>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        if ($('#undergoesTable tbody tr').length > 0) {
+            $('#undergoesTable').DataTable({
+                "paging": true, "ordering": true, "info": true, "searching": true, "pageLength": 5,
+                "language": { "search": "", "searchPlaceholder": "Filter results..." }
+            });
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add New Undergoes Record</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg: #f0f4f8; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; }
+        .topbar { max-width: 600px; margin: 0 auto 28px; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #555; font-size: 13px; padding: 6px 16px; border: 1px solid #ddd; border-radius: 20px; background: #fff; }
+        .page-header { max-width: 600px; margin: 0 auto 28px; }
+        .badge-post { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; font-family: var(--mono); font-size: 11px; padding: 4px 14px; border-radius: 8px; text-transform: uppercase; display: inline-block; margin-bottom: 8px; }
+        .content-card { max-width: 600px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 2px 16px rgba(0,0,0,0.07); padding: 32px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 11px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input { padding: 12px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-family: var(--font); font-size: 14px; background: #fafafa; transition: all 0.2s; }
+        .form-group input:focus { border-color: #f59e0b; outline: none; box-shadow: 0 0 0 3px rgba(245,158,11,0.1); background: #fff; }
+        .hint { font-size: 11px; color: #94a3b8; margin-top: 2px; font-family: var(--mono); }
+        .btn-post { grid-column: span 2; background: #f59e0b; color: white; padding: 14px; border: none; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; margin-top: 10px; transition: opacity 0.2s; width: 100%; }
+        .btn-post:hover { opacity: 0.9; }
+        .success-msg { grid-column: span 2; color: #15803d; background: #f0fdf4; padding: 12px; border-radius: 8px; margin-bottom: 4px; font-size: 14px; text-align: center; border: 1px solid #bbf7d0; }
+    </style>
+</head>
+<body>
+
+<div class="topbar"><a th:href="@{/entity/bidwattam/Undergoes}" class="back-btn">← Back</a></div>
+
+<div class="page-header">
+    <span class="badge-post">POST</span>
+    <h2 style="margin-top:8px;">Register New Undergoes Record</h2>
+    <p style="color: #aaa; font-family: var(--mono); font-size: 12px; margin-top: 4px;">/entity/bidwattam/Undergoes/create</p>
+</div>
+
+<div class="content-card">
+    <form th:action="@{/entity/bidwattam/Undergoes/create}" method="post" class="form-grid">
+        <div th:if="${successMessage}" class="success-msg" th:text="${successMessage}"></div>
+
+        <div class="form-group">
+            <label>Patient ID</label>
+            <input type="number" name="patient" placeholder="e.g. 100000003" required/>
+        </div>
+        <div class="form-group">
+            <label>Procedure ID</label>
+            <input type="number" name="procedure" placeholder="e.g. 3" required/>
+        </div>
+        <div class="form-group">
+            <label>Stay ID</label>
+            <input type="number" name="stay" placeholder="e.g. 3216" required/>
+        </div>
+        <div class="form-group">
+            <label>Date Undergoes</label>
+            <input type="text" name="dateUndergoes" placeholder="2008-06-20T00:00:00" required/>
+            <span class="hint">Format: yyyy-MM-ddTHH:mm:ss</span>
+        </div>
+        <div class="form-group">
+            <label>Physician ID</label>
+            <input type="number" name="physician" placeholder="e.g. 5" required/>
+        </div>
+        <div class="form-group">
+            <label>Assisting Nurse ID</label>
+            <input type="number" name="assistingNurse" placeholder="e.g. 102" required/>
+        </div>
+        <button class="btn-post" type="submit">Save Undergoes Record</button>
+    </form>
+</div>
+
+</body>
+</html>

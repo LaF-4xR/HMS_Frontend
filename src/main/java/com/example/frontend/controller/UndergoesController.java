@@ -4,7 +4,9 @@ import com.example.frontend.service.UndergoesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,65 +17,72 @@ public class UndergoesController {
     @Autowired
     private UndergoesService undergoesService;
 
-    // ── Entry point from home page ──
     @GetMapping("/entity/bidwattam/Undergoes")
-    public String index(Model model) {
-        model.addAttribute("undergoesList", undergoesService.getAll());
-        return "undergoes";
+    public String index() {
+        return "undergoes/undergoes";
     }
 
-    // ── GET BY COMPOSITE ID ──
+    @GetMapping("/entity/bidwattam/Undergoes/all")
+    public String getAll(Model model) {
+        model.addAttribute("undergoesList", undergoesService.getAll());
+        return "undergoes/all-undergoes";
+    }
+
     @GetMapping("/entity/bidwattam/Undergoes/searchById")
     public String searchById(
-            @RequestParam int patient,
-            @RequestParam int procedure,
-            @RequestParam int stay,
-            @RequestParam String date,
+            @RequestParam(required = false) Integer patient,
+            @RequestParam(required = false) Integer procedure,
+            @RequestParam(required = false) Integer stay,
+            @RequestParam(required = false) String date,
             Model model) {
 
-        model.addAttribute("undergoesList", undergoesService.getAll());
-        model.addAttribute("undergoesById",
-                undergoesService.getById(patient, procedure, stay, date));
-        return "undergoes";
+        if (patient != null && procedure != null && stay != null && date != null && !date.isBlank()) {
+            model.addAttribute("undergoesById", undergoesService.getById(patient, procedure, stay, date));
+        }
+        return "undergoes/undergoes-id";
     }
 
-    // ── GET BY PATIENT ──
     @GetMapping("/entity/bidwattam/Undergoes/searchByPatient")
-    public String searchByPatient(@RequestParam int patientId, Model model) {
-        model.addAttribute("undergoesList", undergoesService.getAll());
-        model.addAttribute("undergoesByPatient", undergoesService.getByPatient(patientId));
-        return "undergoes";
+    public String searchByPatient(@RequestParam(required = false) Integer patientId, Model model) {
+        if (patientId != null) {
+            model.addAttribute("undergoesByPatient", undergoesService.getByPatient(patientId));
+        }
+        return "undergoes/undergoes-patient";
     }
 
-    // ── GET BY PROCEDURE ──
     @GetMapping("/entity/bidwattam/Undergoes/searchByProcedure")
-    public String searchByProcedure(@RequestParam int procedureId, Model model) {
-        model.addAttribute("undergoesList", undergoesService.getAll());
-        model.addAttribute("undergoesByProcedure", undergoesService.getByProcedure(procedureId));
-        return "undergoes";
+    public String searchByProcedure(@RequestParam(required = false) Integer procedureId, Model model) {
+        if (procedureId != null) {
+            model.addAttribute("undergoesByProcedure", undergoesService.getByProcedure(procedureId));
+        }
+        return "undergoes/undergoes-procedure";
     }
 
-    // ── GET BY STAY ──
     @GetMapping("/entity/bidwattam/Undergoes/searchByStay")
-    public String searchByStay(@RequestParam int stayId, Model model) {
-        model.addAttribute("undergoesList", undergoesService.getAll());
-        model.addAttribute("undergoesByStay", undergoesService.getByStay(stayId));
-        return "undergoes";
+    public String searchByStay(@RequestParam(required = false) Integer stayId, Model model) {
+        if (stayId != null) {
+            model.addAttribute("undergoesByStay", undergoesService.getByStay(stayId));
+        }
+        return "undergoes/undergoes-stay";
     }
 
-    // ── GET BY DATE RANGE ──
     @GetMapping("/entity/bidwattam/Undergoes/searchByDateRange")
     public String searchByDateRange(
-            @RequestParam String start,
-            @RequestParam String end,
+            @RequestParam(required = false) String start,
+            @RequestParam(required = false) String end,
             Model model) {
 
-        model.addAttribute("undergoesList", undergoesService.getAll());
-        model.addAttribute("undergoesByDateRange", undergoesService.getByDateRange(start, end));
-        return "undergoes";
+        if (start != null && !start.isBlank() && end != null && !end.isBlank()) {
+            model.addAttribute("undergoesByDateRange", undergoesService.getByDateRange(start, end));
+        }
+        return "undergoes/undergoes-daterange";
     }
 
-    // ── CREATE ──
+    @GetMapping("/entity/bidwattam/Undergoes/createForm")
+    public String createForm() {
+        return "undergoes/undergoes-create";
+    }
+
     @PostMapping("/entity/bidwattam/Undergoes/create")
     public String create(
             @RequestParam int patient,
@@ -81,7 +90,8 @@ public class UndergoesController {
             @RequestParam int stay,
             @RequestParam String dateUndergoes,
             @RequestParam int physician,
-            @RequestParam int assistingNurse) {
+            @RequestParam int assistingNurse,
+            Model model) {
 
         Map<String, Object> body = new HashMap<>();
         body.put("patient", patient);
@@ -92,10 +102,15 @@ public class UndergoesController {
         body.put("assistingNurse", assistingNurse);
 
         undergoesService.create(body);
-        return "redirect:/entity/bidwattam/Undergoes";
+        model.addAttribute("successMessage", "Undergoes record created successfully!");
+        return "undergoes/undergoes-create";
     }
 
-    // ── UPDATE ──
+    @GetMapping("/entity/bidwattam/Undergoes/updateFormPage")
+    public String updateFormPage() {
+        return "undergoes/undergoes-update";
+    }
+
     @PostMapping("/entity/bidwattam/Undergoes/updateForm")
     public String update(
             @RequestParam int patient,
@@ -103,7 +118,8 @@ public class UndergoesController {
             @RequestParam int stay,
             @RequestParam String date,
             @RequestParam int physician,
-            @RequestParam int assistingNurse) {
+            @RequestParam int assistingNurse,
+            Model model) {
 
         Map<String, Object> body = new HashMap<>();
         body.put("patient", patient);
@@ -114,18 +130,7 @@ public class UndergoesController {
         body.put("assistingNurse", assistingNurse);
 
         undergoesService.update(patient, procedure, stay, date, body);
-        return "redirect:/entity/bidwattam/Undergoes";
-    }
-
-    // ── DELETE ──
-    @PostMapping("/entity/bidwattam/Undergoes/deleteForm")
-    public String delete(
-            @RequestParam int patient,
-            @RequestParam int procedure,
-            @RequestParam int stay,
-            @RequestParam String date) {
-
-        undergoesService.delete(patient, procedure, stay, date);
-        return "redirect:/entity/bidwattam/Undergoes";
+        model.addAttribute("successMessage", "Undergoes record updated successfully!");
+        return "undergoes/undergoes-update";
     }
 }

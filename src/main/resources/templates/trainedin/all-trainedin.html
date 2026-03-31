@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>All TrainedIn Records</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg: #f0f4f8; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; --green: #16a34a; }
+        body { font-family: var(--font); background: var(--bg); min-height: 100vh; padding: 40px 24px 64px; color: #1e293b; }
+        .topbar { max-width: 1100px; margin: 0 auto 28px; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #64748b; font-size: 13px; padding: 8px 18px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; transition: all 0.2s; }
+        .back-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .page-header { max-width: 1100px; margin: 0 auto 28px; }
+        .badge { font-family: var(--mono); font-size: 11px; padding: 4px 12px; border-radius: 8px; background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; text-transform: uppercase; }
+        .content-card { max-width: 1100px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 24px; }
+        .dataTables_wrapper { font-family: var(--font); color: #475569; }
+        .dataTables_filter input { border: 1px solid #e2e8f0 !important; border-radius: 8px !important; padding: 6px 12px !important; margin-bottom: 20px !important; outline: none !important; }
+        table.dataTable thead th { background: #f8fafc !important; color: #64748b !important; font-size: 11px !important; text-transform: uppercase !important; letter-spacing: 0.05em !important; border-bottom: 1px solid #e2e8f0 !important; padding: 14px 20px !important; }
+        table.dataTable tbody td { padding: 14px 20px !important; border-bottom: 1px solid #f1f5f9 !important; font-size: 14px; }
+        .mono-text { font-family: var(--mono); font-size: 13px; color: #475569; }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current { background: #1e293b !important; color: white !important; border: none !important; border-radius: 6px !important; }
+        .filter-bar { display: flex; align-items: flex-end; gap: 16px; padding: 24px 24px 0; flex-wrap: wrap; margin-bottom: 16px; }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        .filter-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .filter-group input { padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 10px; outline: none; width: 200px; font-family: var(--font); font-size: 14px; transition: border 0.2s; }
+        .filter-group input:focus { border-color: #4fc98c; box-shadow: 0 0 0 3px rgba(79,201,140,0.1); }
+        .clear-btn { padding: 10px 20px; border: 1.5px solid #e2e8f0; border-radius: 10px; background: #fff; color: #64748b; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 1px; }
+        .clear-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <a th:href="@{/entity/bidwattam/TrainedIn}" class="back-btn">← Back to Endpoints</a>
+</div>
+
+<div class="page-header">
+    <span class="badge">GET</span>
+    <h2 style="margin-top:8px;">All TrainedIn Records</h2>
+    <p style="color: #94a3b8; font-family: var(--mono); font-size: 12px; margin-top: 4px;">/entity/bidwattam/TrainedIn/all</p>
+</div>
+
+<div class="content-card">
+
+    <!-- Custom column filters -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label>Filter by Physician ID</label>
+            <input type="number" id="filterPhysician" placeholder="e.g. 3"/>
+        </div>
+        <div class="filter-group">
+            <label>Filter by Treatment ID</label>
+            <input type="number" id="filterTreatment" placeholder="e.g. 1"/>
+        </div>
+        <button class="clear-btn" onclick="clearFilters()">Clear</button>
+    </div>
+
+    <table id="trainedinTable" class="display" style="width:100%">
+        <thead>
+        <tr>
+            <th>Physician ID</th>
+            <th>Treatment ID</th>
+            <th>Certification Date</th>
+            <th>Expires</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${trainedInList}">
+            <td class="mono-text" th:text="${t['physicianId']}"></td>
+            <td class="mono-text" th:text="${t['treatmentId']}"></td>
+            <td th:text="${t['certificationDate']}"></td>
+            <td th:text="${t['certificationExpires']}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var table;
+    $(document).ready(function() {
+        table = $('#trainedinTable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "searching": true,
+            "pageLength": 10,
+            "dom": 'lrtip', // hides the default global search bar
+            "language": {
+                "lengthMenu": "Show _MENU_ entries"
+            },
+            "columnDefs": [
+                { "targets": 0, "searchable": true },
+                { "targets": 1, "searchable": true }
+            ]
+        });
+
+        // Exact match filter for Physician ID (column 0)
+        $('#filterPhysician').on('input', function() {
+            var val = $.fn.dataTable.util.escapeRegex($(this).val());
+            table.column(0).search(val ? '^' + val + '$' : '', true, false).draw();
+        });
+
+        // Exact match filter for Treatment ID (column 1)
+        $('#filterTreatment').on('input', function() {
+            var val = $.fn.dataTable.util.escapeRegex($(this).val());
+            table.column(1).search(val ? '^' + val + '$' : '', true, false).draw();
+        });
+    });
+
+    function clearFilters() {
+        $('#filterPhysician').val('');
+        $('#filterTreatment').val('');
+        table.column(0).search('').column(1).search('').draw();
+    }
+</script>
+</body>
+</html>

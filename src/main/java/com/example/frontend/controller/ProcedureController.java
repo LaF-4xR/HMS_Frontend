@@ -17,36 +17,51 @@ public class ProcedureController {
 
     // ── Entry point from home page ──
     @GetMapping("/entity/bidwattam/Procedures")
-    public String index(Model model) {
-        model.addAttribute("procedureList", procedureService.getAll());
-        return "procedures";
+    public String index() {
+        return "procedure/procedure";
     }
 
-    // ── GET BY ID ──
-    @GetMapping("/entity/bidwattam/Procedures/searchById")
-    public String searchById(@RequestParam int code, Model model) {
+    // ── GET ALL ──
+    @GetMapping("/entity/bidwattam/Procedures/all")
+    public String getAll(Model model) {
         model.addAttribute("procedureList", procedureService.getAll());
-        model.addAttribute("procedureById", procedureService.getById(code));
-        return "procedures";
+        return "procedure/all-procedures";
+    }
+
+    // ── GET BY CODE ──
+    @GetMapping("/entity/bidwattam/Procedures/searchById")
+    public String searchById(@RequestParam(required = false) Integer code, Model model) {
+        if (code != null) {
+            model.addAttribute("procedureById", procedureService.getById(code));
+        }
+        return "procedure/procedure-id";
     }
 
     // ── SEARCH BY NAME ──
     @GetMapping("/entity/bidwattam/Procedures/searchByName")
-    public String searchByName(@RequestParam String name, Model model) {
-        model.addAttribute("procedureList", procedureService.getAll());
-        model.addAttribute("procedureByName", procedureService.searchByName(name));
-        return "procedures";
+    public String searchByName(@RequestParam(required = false) String name, Model model) {
+        if (name != null) {
+            model.addAttribute("procedureByName", procedureService.searchByName(name));
+        }
+        return "procedure/procedure-name";
     }
 
     // ── FILTER BY COST ──
     @GetMapping("/entity/bidwattam/Procedures/filterByCost")
     public String filterByCost(
-            @RequestParam double min,
-            @RequestParam double max,
+            @RequestParam(required = false) Double min,
+            @RequestParam(required = false) Double max,
             Model model) {
-        model.addAttribute("procedureList", procedureService.getAll());
-        model.addAttribute("procedureByCost", procedureService.filterByCost(min, max));
-        return "procedures";
+        if (min != null && max != null) {
+            model.addAttribute("procedureByCost", procedureService.filterByCost(min, max));
+        }
+        return "procedure/procedure-cost";
+    }
+
+    // ── CREATE FORM PAGE ──
+    @GetMapping("/entity/bidwattam/Procedures/createForm")
+    public String createForm() {
+        return "procedure/procedure-create";
     }
 
     // ── CREATE ──
@@ -54,7 +69,8 @@ public class ProcedureController {
     public String create(
             @RequestParam int code,
             @RequestParam String name,
-            @RequestParam double cost) {
+            @RequestParam double cost,
+            Model model) {
 
         Map<String, Object> body = new HashMap<>();
         body.put("code", code);
@@ -62,7 +78,14 @@ public class ProcedureController {
         body.put("cost", cost);
 
         procedureService.create(body);
-        return "redirect:/entity/bidwattam/Procedures";
+        model.addAttribute("successMessage", "Procedure created successfully!");
+        return "procedure/procedure-create";
+    }
+
+    // ── UPDATE FORM PAGE ──
+    @GetMapping("/entity/bidwattam/Procedures/updateFormPage")
+    public String updateFormPage() {
+        return "procedure/procedure-update";
     }
 
     // ── UPDATE ──
@@ -70,7 +93,8 @@ public class ProcedureController {
     public String update(
             @RequestParam int code,
             @RequestParam String name,
-            @RequestParam double cost) {
+            @RequestParam double cost,
+            Model model) {
 
         Map<String, Object> body = new HashMap<>();
         body.put("code", code);
@@ -78,13 +102,7 @@ public class ProcedureController {
         body.put("cost", cost);
 
         procedureService.update(code, body);
-        return "redirect:/entity/bidwattam/Procedures";
-    }
-
-    // ── DELETE ──
-    @PostMapping("/entity/bidwattam/Procedures/deleteForm")
-    public String delete(@RequestParam int code) {
-        procedureService.delete(code);
-        return "redirect:/entity/bidwattam/Procedures";
+        model.addAttribute("successMessage", "Procedure updated successfully!");
+        return "procedure/procedure-update";
     }
 }

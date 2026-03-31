@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Find Procedure by Name</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg: #f0f4f8; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; --orange: #f87c4f; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; color: #1e293b; }
+        .topbar { max-width: 1000px; margin: 0 auto 28px; }
+        .back-btn { text-decoration: none; color: #64748b; font-size: 13px; padding: 8px 18px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+        .page-header { max-width: 1000px; margin: 0 auto 28px; }
+        .badge { font-family: var(--mono); font-size: 11px; padding: 4px 12px; border-radius: 8px; background: #fff7ed; color: var(--orange); border: 1px solid #fed7aa; text-transform: uppercase; }
+        .content-card { max-width: 1000px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
+        .search-bar { padding: 32px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-end; gap: 12px; background: #fafbfc; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .form-group input { padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; outline: none; width: 280px; font-family: var(--font); }
+        .form-group input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(248,124,79,0.1); }
+        .btn { padding: 12px 28px; border: none; border-radius: 10px; background: #22c55e; color: #fff; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .dataTables_wrapper { padding: 24px; font-family: var(--font); }
+        table.dataTable thead th { background: #f8fafc !important; color: #64748b !important; font-size: 11px !important; text-transform: uppercase !important; border-bottom: 1px solid #e2e8f0 !important; padding: 14px 20px !important; }
+        table.dataTable tbody td { padding: 14px 20px !important; border-bottom: 1px solid #f1f5f9 !important; font-size: 14px; }
+        .mono-text { font-family: var(--mono); font-size: 13px; color: #475569; }
+    </style>
+</head>
+<body>
+
+<div class="topbar"><a th:href="@{/entity/bidwattam/Procedures}" class="back-btn">← Back</a></div>
+
+<div class="page-header">
+    <span class="badge">GET</span>
+    <h2 style="margin-top:8px;">Search Procedure by Name</h2>
+    <p style="color: #94a3b8; font-family: var(--mono); font-size: 12px; margin-top: 4px;">/entity/bidwattam/Procedures/search?name=</p>
+</div>
+
+<div class="content-card">
+    <form th:action="@{/entity/bidwattam/Procedures/searchByName}" method="get" class="search-bar">
+        <div class="form-group">
+            <label>Procedure Name</label>
+            <input type="text" name="name" placeholder="e.g. Rhinoplasty" th:value="${param.name}" required/>
+        </div>
+        <button class="btn" type="submit">Lookup</button>
+    </form>
+
+    <div th:if="${procedureByName != null}">
+        <table id="procedureTable" class="display" style="width:100%">
+            <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Cost</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${procedureByName}">
+                <td class="mono-text" th:text="${p.code}"></td>
+                <td style="font-weight: 500;" th:text="${p.name}"></td>
+                <td class="mono-text" th:text="${p.cost}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${#lists.isEmpty(procedureByName)}" style="padding: 40px; text-align: center; color: #94a3b8;">
+            No records found for name: <strong th:text="${param.name}"></strong>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        if ($('#procedureTable tbody tr').length > 0) {
+            $('#procedureTable').DataTable({
+                "paging": true, "ordering": true, "info": true, "searching": true, "pageLength": 5,
+                "language": { "search": "", "searchPlaceholder": "Filter results..." }
+            });
+        }
+    });
+</script>
+</body>
+</html>

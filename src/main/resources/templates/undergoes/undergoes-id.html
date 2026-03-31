@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Find Undergoes by ID</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg: #f0f4f8; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; --green: #16a34a; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; color: #1e293b; }
+        .topbar { max-width: 1000px; margin: 0 auto 28px; }
+        .back-btn { text-decoration: none; color: #64748b; font-size: 13px; padding: 8px 18px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+        .page-header { max-width: 1000px; margin: 0 auto 28px; }
+        .badge { font-family: var(--mono); font-size: 11px; padding: 4px 12px; border-radius: 8px; background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; text-transform: uppercase; }
+        .content-card { max-width: 1000px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
+        .search-bar { padding: 32px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-end; gap: 12px; background: #fafbfc; flex-wrap: wrap; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .form-group input { padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; outline: none; width: 200px; font-family: var(--font); }
+        .form-group input:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.1); }
+        .hint { font-size: 11px; color: #94a3b8; font-family: var(--mono); margin-top: 2px; }
+        .btn { padding: 12px 28px; border: none; border-radius: 10px; background: #22c55e; color: #fff; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .result-box { margin: 28px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; overflow: hidden; }
+        .result-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .result-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid #bbf7d0; font-size: 14px; }
+        .result-row:last-child { border-bottom: none; }
+        .result-key { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .result-val { font-family: var(--mono); font-size: 13px; color: #1e293b; font-weight: 500; }
+        .no-result { padding: 40px; text-align: center; color: #94a3b8; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="topbar"><a th:href="@{/entity/bidwattam/Undergoes}" class="back-btn">← Back</a></div>
+
+<div class="page-header">
+    <span class="badge">GET</span>
+    <h2 style="margin-top:8px;">Search Undergoes by Composite ID</h2>
+    <p style="color: #94a3b8; font-family: var(--mono); font-size: 12px; margin-top: 4px;">/entity/bidwattam/Undergoes/{patient}/{procedure}/{stay}/{date}</p>
+</div>
+
+<div class="content-card">
+    <form th:action="@{/entity/bidwattam/Undergoes/searchById}" method="get" class="search-bar">
+        <div class="form-group">
+            <label>Patient ID</label>
+            <input type="number" name="patient" placeholder="e.g. 100000001" th:value="${param.patient}" required/>
+        </div>
+        <div class="form-group">
+            <label>Procedure ID</label>
+            <input type="number" name="procedure" placeholder="e.g. 2" th:value="${param.procedure}" required/>
+        </div>
+        <div class="form-group">
+            <label>Stay ID</label>
+            <input type="number" name="stay" placeholder="e.g. 3215" th:value="${param.stay}" required/>
+        </div>
+        <div class="form-group">
+            <label>Date Undergoes</label>
+            <input type="text" name="date" placeholder="2008-05-06T00:00:00" th:value="${param.date}" required/>
+            <span class="hint">yyyy-MM-ddTHH:mm:ss</span>
+        </div>
+        <button class="btn" type="submit">Lookup</button>
+    </form>
+
+    <div th:if="${undergoesById != null}" class="result-box">
+        <div class="result-row">
+            <span class="result-key">Patient</span>
+            <span class="result-val" th:text="${undergoesById['patient']}"></span>
+        </div>
+        <div class="result-row">
+            <span class="result-key">Procedure</span>
+            <span class="result-val" th:text="${undergoesById['procedure']}"></span>
+        </div>
+        <div class="result-row">
+            <span class="result-key">Stay</span>
+            <span class="result-val" th:text="${undergoesById['stay']}"></span>
+        </div>
+        <div class="result-row">
+            <span class="result-key">Date Undergoes</span>
+            <span class="result-val" th:text="${undergoesById['dateUndergoes']}"></span>
+        </div>
+        <div class="result-row">
+            <span class="result-key">Physician</span>
+            <span class="result-val" th:text="${undergoesById['physician']}"></span>
+        </div>
+        <div class="result-row">
+            <span class="result-key">Assisting Nurse</span>
+            <span class="result-val" th:text="${undergoesById['assistingNurse']}"></span>
+        </div>
+    </div>
+
+    <div class="no-result" th:if="${undergoesById == null and param.patient != null}">
+        No record found for the supplied composite key.
+    </div>
+</div>
+
+</body>
+</html>
