@@ -21,10 +21,10 @@
     <h2 style="margin: 24px 0;">Update Existing Record</h2>
     <div th:if="${successMessage}" class="banner" th:text="${successMessage}"></div>
     <form th:action="@{/entity/arunima/Medication/updateForm}" method="post">
-        <div class="form-group"><label>Code (Target to Update)</label><input type="number" name="code" required/></div>
-        <div class="form-group"><label>New Name</label><input type="text" name="name" placeholder="Leave blank to skip"/></div>
-        <div class="form-group"><label>New Brand</label><input type="text" name="brand" placeholder="Leave blank to skip"/></div>
-        <div class="form-group"><label>New Description</label><input type="text" name="description" placeholder="Leave blank to skip"/></div>
+        <div class="form-group"><label>Code (Target to Update)</label><input type="number" name="code" placeholder="Enter existing code" required/></div>
+        <div class="form-group"><label>New Name</label><input type="text" name="name" placeholder="Enter Name"/></div>
+        <div class="form-group"><label>New Brand</label><input type="text" name="brand" placeholder="Enter Brand"/></div>
+        <div class="form-group"><label>New Description</label><input type="text" name="description" placeholder="Enter Description"/></div>
         <button type="submit" class="btn-update">Save Changes</button>
     </form>
 </div>
