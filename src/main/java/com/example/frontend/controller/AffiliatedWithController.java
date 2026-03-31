@@ -18,89 +18,115 @@ public class AffiliatedWithController {
         this.affiliatedWithService = affiliatedWithService;
     }
 
-    @GetMapping
-    public String affiliationPage(Model model){
-        model.addAttribute("affiliations", affiliatedWithService.getAllAffiliations());
-        return "affiliatedWith";
+    // Main Hub (The card grid)
+    @GetMapping("")
+    public String affiliationPage(){
+        return "affiliatedWith/affiliatedWith";
     }
 
-    // Search by Composite ID
+    // 1. Get All Affiliations
+    @GetMapping("/all")
+    public String getAllAffiliations(Model model) {
+        model.addAttribute("affiliations", affiliatedWithService.getAllAffiliations());
+        return "affiliatedWith/all-affiliations";
+    }
+
+    // 2. Search by Composite ID
     @GetMapping("/searchById")
-    public String searchById(@RequestParam int physicianId, @RequestParam int departmentId, Model model) {
-        model.addAttribute("affiliations", affiliatedWithService.getAllAffiliations());
-        model.addAttribute("affiliationById", affiliatedWithService.getAffiliationById(physicianId, departmentId));
-        return "affiliatedWith";
+    public String searchById(@RequestParam(required = false) Integer physicianId,
+                             @RequestParam(required = false) Integer departmentId,
+                             Model model) {
+        if (physicianId != null && departmentId != null) {
+            model.addAttribute("affiliationById", affiliatedWithService.getAffiliationById(physicianId, departmentId));
+        }
+        return "affiliatedWith/affiliatedWith-id";
     }
 
-    // Search by Physician
+    // 3. Search by Physician
     @GetMapping("/searchByPhysician")
-    public String searchByPhysician(@RequestParam int physicianId, Model model) {
-        model.addAttribute("affiliations", affiliatedWithService.getAllAffiliations());
-        model.addAttribute("affiliationsByPhysician", affiliatedWithService.getAffiliationsByPhysician(physicianId));
-        return "affiliatedWith";
+    public String searchByPhysician(@RequestParam(required = false) Integer physicianId, Model model) {
+        if (physicianId != null) {
+            model.addAttribute("affiliationsByPhysician", affiliatedWithService.getAffiliationsByPhysician(physicianId));
+        }
+        return "affiliatedWith/affiliatedWith-physician";
     }
 
-    // Search by Department
+    // 4. Search by Department
     @GetMapping("/searchByDepartment")
-    public String searchByDepartment(@RequestParam int departmentId, Model model) {
-        model.addAttribute("affiliations", affiliatedWithService.getAllAffiliations());
-        model.addAttribute("affiliationsByDepartment", affiliatedWithService.getAffiliationsByDepartment(departmentId));
-        return "affiliatedWith";
+    public String searchByDepartment(@RequestParam(required = false) Integer departmentId, Model model) {
+        if (departmentId != null) {
+            model.addAttribute("affiliationsByDepartment", affiliatedWithService.getAffiliationsByDepartment(departmentId));
+        }
+        return "affiliatedWith/affiliatedWith-department";
     }
 
-    // Create affiliation
+    // 5. Create Form & Action
+    @GetMapping("/createForm")
+    public String showCreateForm() {
+        return "affiliatedWith/affiliatedWith-create";
+    }
+
     @PostMapping("/create")
     public String createAffiliation(@RequestParam Map<String, Object> affiliation, RedirectAttributes redirectAttributes){
+        try {
+            // Handle boolean conversion for primaryAffiliation
+            if (affiliation.containsKey("primaryAffiliation")) {
+                String val = affiliation.get("primaryAffiliation").toString();
+                affiliation.put("primaryAffiliation", val.equalsIgnoreCase("true"));
+            }
 
-        // Handle boolean conversion for primaryAffiliation
-        if (affiliation.containsKey("primaryAffiliation")) {
-            String val = affiliation.get("primaryAffiliation").toString();
-            affiliation.put("primaryAffiliation", val.equalsIgnoreCase("true"));
+            Object result = affiliatedWithService.createAffiliation(affiliation);
+            if (result == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Create failed. Please check inputs.");
+            } else {
+                redirectAttributes.addFlashAttribute("successMessage", "Affiliation created successfully!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Create failed: " + e.getMessage());
         }
-
-        Map result = affiliatedWithService.createAffiliation(affiliation);
-        if (result == null) {
-            redirectAttributes.addFlashAttribute("createError", "Create failed. Please check inputs.");
-        } else {
-            redirectAttributes.addFlashAttribute("createSuccess", "Affiliation created successfully.");
-        }
-        return "redirect:/entity/ayan/AffiliatedWith";
+        return "redirect:/entity/ayan/AffiliatedWith/createForm";
     }
 
-    // Update form handler
+    // 6. Update Form & Action
+    @GetMapping("/updateFormPage")
+    public String showUpdateForm() {
+        return "affiliatedWith/affiliatedWith-update";
+    }
+
     @PostMapping("/updateForm")
-    public String updateForm(@RequestParam int physician,
-                             @RequestParam int department,
-                             @RequestParam Map<String, Object> body,
-                             RedirectAttributes redirectAttributes) {
+    public String processUpdate(@RequestParam int physician,
+                                @RequestParam int department,
+                                @RequestParam Map<String, Object> body,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            // Handle boolean conversion for primaryAffiliation
+            if (body.containsKey("primaryAffiliation")) {
+                String val = body.get("primaryAffiliation").toString();
+                body.put("primaryAffiliation", val.equalsIgnoreCase("true"));
+            }
 
-        // Handle boolean conversion for primaryAffiliation
-        if (body.containsKey("primaryAffiliation")) {
-            String val = body.get("primaryAffiliation").toString();
-            body.put("primaryAffiliation", val.equalsIgnoreCase("true"));
+            Object existing = affiliatedWithService.getAffiliationById(physician, department);
+
+            if (existing == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Update failed: Record not found.");
+            } else {
+                affiliatedWithService.updateAffiliation(physician, department, body);
+                redirectAttributes.addFlashAttribute("successMessage", "Affiliation updated successfully!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Update failed: " + e.getMessage());
         }
-
-        Map existing = affiliatedWithService.getAffiliationById(physician, department);
-
-        if (existing == null) {
-            redirectAttributes.addFlashAttribute("updateError", "Update failed: Record not found.");
-        } else {
-            affiliatedWithService.updateAffiliation(physician, department, body);
-            redirectAttributes.addFlashAttribute("updateSuccess", "Affiliation updated successfully.");
-        }
-        return "redirect:/entity/ayan/AffiliatedWith";
+        return "redirect:/entity/ayan/AffiliatedWith/updateFormPage";
     }
 
-    // Delete affiliation handler
+    // Delete is kept functional behind the scenes
     @PostMapping("/delete/{physicianId}/{departmentId}")
     public String deleteAffiliation(@PathVariable int physicianId, @PathVariable int departmentId, RedirectAttributes redirectAttributes) {
-        Map existing = affiliatedWithService.getAffiliationById(physicianId, departmentId);
-
-        if (existing == null) {
-            redirectAttributes.addFlashAttribute("deleteError", "Delete failed: Record not found.");
-        } else {
+        try {
             affiliatedWithService.deleteAffiliation(physicianId, departmentId);
-            redirectAttributes.addFlashAttribute("deleteSuccess", "Affiliation deleted successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Affiliation deleted successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Delete failed: " + e.getMessage());
         }
         return "redirect:/entity/ayan/AffiliatedWith";
     }
