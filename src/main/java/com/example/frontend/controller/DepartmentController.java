@@ -18,75 +18,99 @@ public class DepartmentController {
         this.departmentService = departmentService;
     }
 
-    @GetMapping
-    public String departmentPage(Model model){
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        return "department";
+    // Main Hub (The card grid)
+    @GetMapping("")
+    public String departmentPage(){
+        return "department/department";
     }
 
-    // Search by ID
+    // 1. Get All Departments
+    @GetMapping("/all")
+    public String getAllDepartments(Model model) {
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        return "department/all-departments";
+    }
+
+    // 2. Search by ID
     @GetMapping("/searchById")
-    public String searchById(@RequestParam int id, Model model) {
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("departmentById", departmentService.getDepartmentById(id));
-        return "department";
+    public String searchById(@RequestParam(required = false) Integer id, Model model) {
+        if (id != null) {
+            model.addAttribute("departmentById", departmentService.getDepartmentById(id));
+        }
+        return "department/department-id";
     }
 
-    // Search by Name
+    // 3. Search by Name
     @GetMapping("/searchByName")
-    public String searchByName(@RequestParam String name, Model model) {
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("departmentByName", departmentService.getDepartmentByName(name));
-        return "department";
+    public String searchByName(@RequestParam(required = false) String name, Model model) {
+        if (name != null && !name.isEmpty()) {
+            model.addAttribute("departmentByName", departmentService.getDepartmentByName(name));
+        }
+        return "department/department-name";
     }
 
-    // Search by Head
+    // 4. Search by Head
     @GetMapping("/searchByHead")
-    public String searchByHead(@RequestParam int head, Model model) {
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("departmentByHead", departmentService.getDepartmentByHead(head));
-        return "department";
+    public String searchByHead(@RequestParam(required = false) Integer head, Model model) {
+        if (head != null) {
+            model.addAttribute("departmentByHead", departmentService.getDepartmentByHead(head));
+        }
+        return "department/department-head";
     }
 
-    // Create department
+    // 5. Create Form & Action
+    @GetMapping("/createForm")
+    public String showCreateForm() {
+        return "department/department-create";
+    }
+
     @PostMapping("/create")
     public String createDepartment(@RequestParam Map<String, Object> department, RedirectAttributes redirectAttributes){
-        Map result = departmentService.createDepartment(department);
-        if (result == null) {
-            redirectAttributes.addFlashAttribute("createError", "Create failed. Please check inputs.");
-        } else {
-            redirectAttributes.addFlashAttribute("createSuccess", "Department created successfully.");
+        try {
+            // Assuming your service handles Map or you have adapted it
+            Object result = departmentService.createDepartment(department);
+            if (result == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Create failed. Please check inputs.");
+            } else {
+                redirectAttributes.addFlashAttribute("successMessage", "Department created successfully!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Create failed: " + e.getMessage());
         }
-        return "redirect:/entity/ayan/Department";
+        return "redirect:/entity/ayan/Department/createForm";
     }
 
-    // Update form handler
+    // 6. Update Form & Action
+    @GetMapping("/updateFormPage")
+    public String showUpdateForm() {
+        return "department/department-update";
+    }
+
     @PostMapping("/updateForm")
-    public String updateForm(@RequestParam int id,
-                             @RequestParam Map<String, Object> body,
-                             RedirectAttributes redirectAttributes) {
+    public String processUpdate(@RequestParam int id, @RequestParam Map<String, Object> body, RedirectAttributes redirectAttributes) {
         body.remove("id"); // Remove the search ID so it doesn't overwrite the payload
-        Map existing = departmentService.getDepartmentById(id);
-
-        if (existing == null) {
-            redirectAttributes.addFlashAttribute("updateError", "Update failed: ID " + id + " not found.");
-        } else {
-            departmentService.updateDepartment(id, body);
-            redirectAttributes.addFlashAttribute("updateSuccess", "Department updated successfully.");
+        try {
+            Object existing = departmentService.getDepartmentById(id);
+            if (existing == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Update failed: ID " + id + " not found.");
+            } else {
+                departmentService.updateDepartment(id, body);
+                redirectAttributes.addFlashAttribute("successMessage", "Department ID " + id + " updated successfully!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Update failed: " + e.getMessage());
         }
-        return "redirect:/entity/ayan/Department";
+        return "redirect:/entity/ayan/Department/updateFormPage";
     }
 
-    // Delete department handler
+    // Delete is kept functional behind the scenes if you need it via Postman
     @PostMapping("/delete/{id}")
     public String deleteDepartment(@PathVariable int id, RedirectAttributes redirectAttributes) {
-        Map existing = departmentService.getDepartmentById(id);
-
-        if (existing == null) {
-            redirectAttributes.addFlashAttribute("deleteError", "Delete failed: ID " + id + " not found.");
-        } else {
+        try {
             departmentService.deleteDepartment(id);
-            redirectAttributes.addFlashAttribute("deleteSuccess", "Department deleted successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Department deleted successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Delete failed: " + e.getMessage());
         }
         return "redirect:/entity/ayan/Department";
     }
