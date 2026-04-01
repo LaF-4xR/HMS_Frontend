@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,37 +23,56 @@ public class AppointmentController {
     }
 
     @GetMapping
-    public String appointmentPage(Model model) {
+    public String appointmentPage() {
+        return "appointment/appointment";
+    }
+
+    @GetMapping("/all")
+    public String allAppointments(Model model) {
         model.addAttribute("appointments", appointmentService.getAllAppointments());
-        return "appointment";
+        return "appointment/appointment-all";
     }
 
     @GetMapping("/searchById")
-    public String searchById(@RequestParam int id, Model model) {
-        model.addAttribute("appointments", appointmentService.getAllAppointments());
-        model.addAttribute("appointmentById", appointmentService.getAppointmentById(id));
-        return "appointment";
+    public String searchById(@RequestParam(required = false) Integer id, Model model) {
+        if (id != null) {
+            model.addAttribute("appointmentById", appointmentService.getAppointmentById(id));
+        }
+        return "appointment/appointment-id";
     }
 
     @GetMapping("/searchByPatient")
-    public String searchByPatient(@RequestParam int patientSsn, Model model) {
-        model.addAttribute("appointments", appointmentService.getAllAppointments());
-        model.addAttribute("appointmentByPatient", appointmentService.getByPatientSsn(patientSsn));
-        return "appointment";
+    public String searchByPatient(@RequestParam(required = false) Integer patientSsn, Model model) {
+        if (patientSsn != null) {
+            model.addAttribute("appointmentByPatient", appointmentService.getByPatientSsn(patientSsn));
+        }
+        return "appointment/appointment-patient";
     }
 
     @GetMapping("/searchByNurse")
-    public String searchByNurse(@RequestParam int nurseId, Model model) {
-        model.addAttribute("appointments", appointmentService.getAllAppointments());
-        model.addAttribute("appointmentByNurse", appointmentService.getByNurseId(nurseId));
-        return "appointment";
+    public String searchByNurse(@RequestParam(required = false) Integer nurseId, Model model) {
+        if (nurseId != null) {
+            model.addAttribute("appointmentByNurse", appointmentService.getByNurseId(nurseId));
+        }
+        return "appointment/appointment-nurse";
     }
 
     @GetMapping("/searchByPhysician")
-    public String searchByPhysician(@RequestParam int physicianId, Model model) {
-        model.addAttribute("appointments", appointmentService.getAllAppointments());
-        model.addAttribute("appointmentByPhysician", appointmentService.getByPhysicianId(physicianId));
-        return "appointment";
+    public String searchByPhysician(@RequestParam(required = false) Integer physicianId, Model model) {
+        if (physicianId != null) {
+            model.addAttribute("appointmentByPhysician", appointmentService.getByPhysicianId(physicianId));
+        }
+        return "appointment/appointment-physician";
+    }
+
+    @GetMapping("/createForm")
+    public String createForm() {
+        return "appointment/appointment-create";
+    }
+
+    @GetMapping("/updateFormPage")
+    public String updateFormPage() {
+        return "appointment/appointment-update";
     }
 
     @PostMapping("/create")
@@ -62,7 +82,8 @@ public class AppointmentController {
                                     @RequestParam int physicianId,
                                     @RequestParam String start,
                                     @RequestParam String end,
-                                    @RequestParam String examinationRoom) {
+                                    @RequestParam String examinationRoom,
+                                    RedirectAttributes redirectAttributes) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("appointmentId", appointmentId);
         body.put("patientSsn", patientSsn);
@@ -78,7 +99,8 @@ public class AppointmentController {
         body.put("examinationRoom", examinationRoom.trim());
 
         appointmentService.createAppointment(body);
-        return "redirect:/entity/anubhob/Appointment";
+        redirectAttributes.addFlashAttribute("successMessage", "Appointment created successfully.");
+        return "redirect:/entity/anubhob/Appointment/createForm";
     }
 
     @PostMapping("/updateForm")
@@ -88,7 +110,8 @@ public class AppointmentController {
                              @RequestParam int physicianId,
                              @RequestParam String start,
                              @RequestParam String end,
-                             @RequestParam String examinationRoom) {
+                             @RequestParam String examinationRoom,
+                             RedirectAttributes redirectAttributes) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("appointmentId", id);
         body.put("patientSsn", patientSsn);
@@ -104,7 +127,8 @@ public class AppointmentController {
         body.put("examinationRoom", examinationRoom.trim());
 
         appointmentService.updateAppointment(id, body);
-        return "redirect:/entity/anubhob/Appointment";
+        redirectAttributes.addFlashAttribute("successMessage", "Appointment " + id + " updated successfully.");
+        return "redirect:/entity/anubhob/Appointment/updateFormPage";
     }
 
     @PostMapping("/delete")

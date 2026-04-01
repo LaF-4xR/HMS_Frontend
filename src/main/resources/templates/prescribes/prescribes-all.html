@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>All Prescribes - Prescribes API</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg: #f0f4f8; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; --green: #16a34a; }
+        body { font-family: var(--font); background: var(--bg); min-height: 100vh; padding: 40px 24px 64px; color: #1e293b; }
+        .topbar { max-width: 1100px; margin: 0 auto 28px; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #64748b; font-size: 13px; padding: 8px 18px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; }
+        .page-header { max-width: 1100px; margin: 0 auto 28px; }
+        .badge { font-family: var(--mono); font-size: 11px; padding: 4px 12px; border-radius: 8px; background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; text-transform: uppercase; }
+        .content-card { max-width: 1100px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 24px; }
+        .dataTables_filter input { border: 1px solid #e2e8f0 !important; border-radius: 8px !important; padding: 6px 12px !important; margin-bottom: 20px !important; outline: none !important; }
+        table.dataTable thead th { background: #f8fafc !important; color: #64748b !important; font-size: 11px !important; text-transform: uppercase !important; letter-spacing: 0.05em !important; border-bottom: 1px solid #e2e8f0 !important; padding: 14px 20px !important; }
+        table.dataTable tbody td { padding: 14px 20px !important; border-bottom: 1px solid #f1f5f9 !important; font-size: 14px; }
+        .mono-text { font-family: var(--mono); font-size: 13px; color: #475569; }
+        .empty { color: #94a3b8; font-size: 14px; }
+    </style>
+</head>
+<body>
+<div class="topbar"><a th:href="@{/entity/anubhob/Prescribes}" class="back-btn">← Back to Endpoints</a></div>
+<div class="page-header"><span class="badge">GET</span><h2 style="margin-top:8px;">All Prescribes Records</h2><p style="color: #94a3b8; font-family: var(--mono); font-size: 12px; margin-top: 4px;">/entity/anubhob/Prescribes/all</p></div>
+<div class="content-card" th:if="${prescribes != null and !prescribes.isEmpty()}">
+    <table id="prescribesTable" class="display" style="width:100%">
+        <thead><tr><th th:each="key : ${prescribes[0].keySet()}" th:text="${key}"></th></tr></thead>
+        <tbody><tr th:each="p : ${prescribes}"><td th:each="entry : ${p.entrySet()}" th:classappend="${entry.key == 'physicianId' or entry.key == 'patientSsn' or entry.key == 'medicationCode' or entry.key == 'appointmentId'} ? 'mono-text' : ''" th:text="${entry.value}"></td></tr></tbody>
+    </table>
+</div>
+<div class="content-card" th:if="${prescribes == null or prescribes.isEmpty()}"><p class="empty">No prescription records found.</p></div>
+<script>
+    $(document).ready(function() {
+        $('#prescribesTable').DataTable({
+            paging: true,
+            ordering: true,
+            info: true,
+            searching: true,
+            pageLength: 10,
+            language: { search: "", searchPlaceholder: "Search prescriptions...", lengthMenu: "Show _MENU_ entries" }
+        });
+    });
+</script>
+</body>
+</html>
+

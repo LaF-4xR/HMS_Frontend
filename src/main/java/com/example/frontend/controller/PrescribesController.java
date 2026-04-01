@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,9 +23,14 @@ public class PrescribesController {
     }
 
     @GetMapping
-    public String prescribesPage(Model model) {
+    public String prescribesPage() {
+        return "prescribes/prescribes";
+    }
+
+    @GetMapping("/all")
+    public String allPrescribes(Model model) {
         model.addAttribute("prescribes", prescribesService.getAllPrescribes());
-        return "prescribes";
+        return "prescribes/prescribes-all";
     }
 
     @GetMapping("/searchById")
@@ -33,42 +39,37 @@ public class PrescribesController {
                              @RequestParam int medicationCode,
                              @RequestParam String date,
                              Model model) {
-        model.addAttribute("prescribes", prescribesService.getAllPrescribes());
         model.addAttribute("prescribesById", prescribesService.getById(
                 physicianId,
                 patientSsn,
                 medicationCode,
                 normalizeDateTime(date)
         ));
-        return "prescribes";
+        return "prescribes/prescribes-id";
     }
 
     @GetMapping("/searchByPhysician")
     public String searchByPhysician(@RequestParam int physicianId, Model model) {
-        model.addAttribute("prescribes", prescribesService.getAllPrescribes());
         model.addAttribute("prescribesByPhysician", prescribesService.getByPhysician(physicianId));
-        return "prescribes";
+        return "prescribes/prescribes-physician";
     }
 
     @GetMapping("/searchByPatient")
     public String searchByPatient(@RequestParam int patientSsn, Model model) {
-        model.addAttribute("prescribes", prescribesService.getAllPrescribes());
         model.addAttribute("prescribesByPatient", prescribesService.getByPatient(patientSsn));
-        return "prescribes";
+        return "prescribes/prescribes-patient";
     }
 
     @GetMapping("/searchByMedication")
     public String searchByMedication(@RequestParam int medicationCode, Model model) {
-        model.addAttribute("prescribes", prescribesService.getAllPrescribes());
         model.addAttribute("prescribesByMedication", prescribesService.getByMedication(medicationCode));
-        return "prescribes";
+        return "prescribes/prescribes-medication";
     }
 
     @GetMapping("/searchByAppointment")
     public String searchByAppointment(@RequestParam int appointmentId, Model model) {
-        model.addAttribute("prescribes", prescribesService.getAllPrescribes());
         model.addAttribute("prescribesByAppointment", prescribesService.getByAppointment(appointmentId));
-        return "prescribes";
+        return "prescribes/prescribes-appointment";
     }
 
     @GetMapping("/search")
@@ -76,9 +77,18 @@ public class PrescribesController {
                          @RequestParam int patientSsn,
                          @RequestParam int medicationCode,
                          Model model) {
-        model.addAttribute("prescribes", prescribesService.getAllPrescribes());
         model.addAttribute("prescribesBySearch", prescribesService.search(physicianId, patientSsn, medicationCode));
-        return "prescribes";
+        return "prescribes/prescribes-search";
+    }
+
+    @GetMapping("/createForm")
+    public String createForm() {
+        return "prescribes/prescribes-create";
+    }
+
+    @GetMapping("/updateFormPage")
+    public String updateFormPage() {
+        return "prescribes/prescribes-update";
     }
 
     @PostMapping("/create")
@@ -87,7 +97,8 @@ public class PrescribesController {
                          @RequestParam int medicationCode,
                          @RequestParam String date,
                          @RequestParam(required = false) String appointmentId,
-                         @RequestParam String dose) {
+                         @RequestParam String dose,
+                         RedirectAttributes redirectAttributes) {
 
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("physicianId", physicianId);
@@ -103,7 +114,8 @@ public class PrescribesController {
         payload.put("dose", dose.trim());
 
         prescribesService.createPrescribes(payload);
-        return "redirect:/entity/anubhob/Prescribes";
+        redirectAttributes.addFlashAttribute("successMessage", "Prescription created successfully.");
+        return "redirect:/entity/anubhob/Prescribes/createForm";
     }
 
     @PostMapping("/updateForm")
@@ -113,7 +125,8 @@ public class PrescribesController {
                          @RequestParam String date,
                          @RequestParam(required = false) String newMedicationCode,
                          @RequestParam(required = false) String appointmentId,
-                         @RequestParam String dose) {
+                         @RequestParam String dose,
+                         RedirectAttributes redirectAttributes) {
 
         Map<String, Object> payload = new LinkedHashMap<>();
         Integer parsedNewMedicationCode = parseNullableInteger(newMedicationCode);
@@ -134,8 +147,8 @@ public class PrescribesController {
                 normalizeDateTime(date),
                 payload
         );
-
-        return "redirect:/entity/anubhob/Prescribes";
+        redirectAttributes.addFlashAttribute("successMessage", "Prescription updated successfully.");
+        return "redirect:/entity/anubhob/Prescribes/updateFormPage";
     }
 
     @PostMapping("/delete")

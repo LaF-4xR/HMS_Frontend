@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,30 +23,48 @@ public class PatientController {
     }
 
     @GetMapping
-    public String patientPage(Model model) {
+    public String patientPage() {
+        return "patient/patient";
+    }
+
+    @GetMapping("/all")
+    public String allPatients(Model model) {
         model.addAttribute("patients", patientService.getAllPatients());
-        return "patient";
+        return "patient/all-patients";
     }
 
     @GetMapping("/searchBySsn")
-    public String searchBySsn(@RequestParam int ssn, Model model) {
-        model.addAttribute("patients", patientService.getAllPatients());
-        model.addAttribute("patientBySsn", patientService.getPatientBySsn(ssn));
-        return "patient";
+    public String searchBySsn(@RequestParam(required = false) Integer ssn, Model model) {
+        if (ssn != null) {
+            model.addAttribute("patientBySsn", patientService.getPatientBySsn(ssn));
+        }
+        return "patient/patient-ssn";
     }
 
     @GetMapping("/searchByName")
-    public String searchByName(@RequestParam String name, Model model) {
-        model.addAttribute("patients", patientService.getAllPatients());
-        model.addAttribute("patientByName", patientService.getPatientByName(name));
-        return "patient";
+    public String searchByName(@RequestParam(required = false) String name, Model model) {
+        if (name != null && !name.trim().isEmpty()) {
+            model.addAttribute("patientByName", patientService.getPatientByName(name));
+        }
+        return "patient/patient-name";
     }
 
     @GetMapping("/searchByPcp")
-    public String searchByPcp(@RequestParam Integer pcp, Model model) {
-        model.addAttribute("patients", patientService.getAllPatients());
-        model.addAttribute("patientByPcp", patientService.getPatientByPcp(pcp));
-        return "patient";
+    public String searchByPcp(@RequestParam(required = false) Integer pcp, Model model) {
+        if (pcp != null) {
+            model.addAttribute("patientByPcp", patientService.getPatientByPcp(pcp));
+        }
+        return "patient/patient-pcp";
+    }
+
+    @GetMapping("/createForm")
+    public String createForm() {
+        return "patient/patient-create";
+    }
+
+    @GetMapping("/updateFormPage")
+    public String updateFormPage() {
+        return "patient/patient-update";
     }
 
     @PostMapping("/create")
@@ -54,7 +73,8 @@ public class PatientController {
                                 @RequestParam String address,
                                 @RequestParam String phone,
                                 @RequestParam Long insuranceId,
-                                @RequestParam Integer pcp) {
+                                @RequestParam Integer pcp,
+                                RedirectAttributes redirectAttributes) {
         Map<String, Object> patient = new LinkedHashMap<>();
         patient.put("ssn", ssn);
         patient.put("name", name.trim());
@@ -64,7 +84,8 @@ public class PatientController {
         patient.put("pcp", pcp);
 
         patientService.createPatient(patient);
-        return "redirect:/entity/anubhob/Patient";
+        redirectAttributes.addFlashAttribute("successMessage", "Patient created successfully.");
+        return "redirect:/entity/anubhob/Patient/createForm";
     }
 
     @PostMapping("/updateForm")
@@ -73,7 +94,8 @@ public class PatientController {
                              @RequestParam(required = false) String address,
                              @RequestParam(required = false) String phone,
                              @RequestParam(required = false) Long insuranceId,
-                             @RequestParam(required = false) Integer pcp) {
+                             @RequestParam(required = false) Integer pcp,
+                             RedirectAttributes redirectAttributes) {
         Map<String, Object> body = new LinkedHashMap<>();
         if (name != null && !name.trim().isEmpty()) {
             body.put("name", name.trim());
@@ -92,7 +114,8 @@ public class PatientController {
         }
 
         patientService.updatePatient(ssn, body);
-        return "redirect:/entity/anubhob/Patient";
+        redirectAttributes.addFlashAttribute("successMessage", "Patient SSN " + ssn + " updated successfully.");
+        return "redirect:/entity/anubhob/Patient/updateFormPage";
     }
 
     @PostMapping("/delete")
