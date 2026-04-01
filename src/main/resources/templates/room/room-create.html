@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Register New Room</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --bg: #f8fafc; --card-bg: #ffffff; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+        body { font-family: var(--font); background: var(--bg); padding: 48px 24px; color: #1e293b; }
+        .topbar { max-width: 600px; margin: 0 auto 28px; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #64748b; font-size: 14px; padding: 8px 16px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; }
+        .page-header { max-width: 600px; margin: 0 auto 24px; }
+        .badge-post { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+        .content-card { max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .full-width { grid-column: 1 / -1; }
+        .form-group label { font-size: 12px; font-weight: 700; color: #64748b; }
+        .form-group input, .form-group select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; font-family: var(--font); font-size: 14px; transition: border 0.2s; }
+        .form-group input:focus, .form-group select:focus { border-color: #3b82f6; }
+        .btn-post { grid-column: 1 / -1; background: #10b981; color: white; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 12px; transition: background 0.2s;}
+        .btn-post:hover { background: #059669; }
+    </style>
+</head>
+<body>
+<div class="topbar"><a href="/entity/soumadwip/Room" class="back-btn">← Back to Hub</a></div>
+<div class="page-header">
+    <span class="badge-post">POST</span>
+    <h2 style="margin-top:8px;">Register New Room</h2>
+</div>
+
+<div class="content-card">
+    <form th:action="@{/entity/soumadwip/Room/create}" method="post" class="form-grid">
+        <div class="form-group full-width">
+            <label>Room Number</label>
+            <input type="number" name="roomNumber" placeholder="e.g. 204" required/>
+        </div>
+        <div class="form-group">
+            <label>Block Code</label>
+            <input type="number" name="blockCode" placeholder="e.g. 1" required/>
+        </div>
+        <div class="form-group">
+            <label>Block Floor</label>
+            <input type="number" name="blockFloor" placeholder="e.g. 2" required/>
+        </div>
+        <div class="form-group">
+            <label>Room Type</label>
+            <input type="text" name="roomType" placeholder="e.g. Intensive Care" required/>
+        </div>
+        <div class="form-group">
+            <label>Unavailable Status</label>
+            <select name="unavailable" required>
+                <option value="false">Available (False)</option>
+                <option value="true">Unavailable (True)</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-post">Register Room</button>
+    </form>
+</div>
+</body>
+</html>

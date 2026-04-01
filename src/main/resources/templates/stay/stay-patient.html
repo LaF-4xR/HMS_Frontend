@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Find Stays by Patient</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --bg: #f0f4f8; --card-bg: #ffffff; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; color: #1e293b; }
+        .topbar { max-width: 1000px; margin: 0 auto 28px; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #555; font-size: 13px; padding: 6px 16px; border: 1px solid #ddd; border-radius: 20px; background: #fff; }
+        .page-header { max-width: 1000px; margin: 0 auto 28px; }
+        .badge { font-family: var(--mono); font-size: 11px; background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 6px; font-weight: 700; }
+        .content-card { max-width: 1000px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow: hidden; }
+        .search-bar { padding: 32px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: flex-end; gap: 16px; background: #fafafa; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        input { padding: 10px; border: 1.5px solid #e5e7eb; border-radius: 10px; outline: none; width: 250px; }
+        .btn { padding: 10px 24px; border: none; border-radius: 10px; background: #2563eb; color: #fff; font-weight: 600; cursor: pointer; }
+        .table-container { padding: 24px; }
+        .mono-text { font-family: var(--mono); font-size: 13px; color: #64748b; }
+    </style>
+</head>
+<body>
+<div class="topbar"><a href="/entity/soumadwip/Stay" class="back-btn">← Back</a></div>
+<div class="page-header">
+    <span class="badge">GET</span>
+    <h2 style="margin-top:8px;">Find Stays by Patient ID</h2>
+</div>
+<div class="content-card">
+    <form th:action="@{/entity/soumadwip/Stay/searchByPatient}" method="get" class="search-bar">
+        <div class="form-group">
+            <label>Patient ID</label>
+            <input type="number" name="patientId" placeholder="Enter Patient ID..." th:value="${param.patientId}" required/>
+        </div>
+        <button type="submit" class="btn">Filter History</button>
+    </form>
+
+    <div class="table-container" th:if="${stayByPatient != null}">
+        <table id="patientStayTable" class="display" style="width:100%">
+            <thead>
+            <tr>
+                <th>Stay ID</th>
+                <th>Room</th>
+                <th>Admission Date</th>
+                <th>Discharge Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${stayByPatient}">
+                <td class="mono-text" th:text="${s.stayId}"></td>
+                <td th:text="${s.roomId}"></td>
+                <td class="mono-text" th:text="${s.stayStart}"></td>
+                <td class="mono-text" th:text="${s.stayEnd}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${#lists.isEmpty(stayByPatient)}" style="text-align: center; padding: 20px; color: #94a3b8;">
+            No stay records found for this patient.
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($('#patientStayTable tbody tr').length > 0) {
+            $('#patientStayTable').DataTable({ "pageLength": 5, "searching": false });
+        }
+    });
+</script>
+</body>
+</html>

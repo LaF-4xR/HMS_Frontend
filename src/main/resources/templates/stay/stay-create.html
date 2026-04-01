@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add New Stay</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --bg: #f0f4f8; --card-bg: #ffffff; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; }
+        .topbar { max-width: 600px; margin: 0 auto 28px; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #555; font-size: 13px; padding: 6px 16px; border: 1px solid #ddd; border-radius: 20px; background: #fff; }
+        .page-header { max-width: 600px; margin: 0 auto 28px; }
+        .badge-post { background: #fffbeb; color: #d97706; padding: 4px 10px; border-radius: 6px; font-family: var(--mono); font-size: 11px; font-weight: 700; }
+        .content-card { max-width: 600px; margin: 0 auto; background: #fff; border-radius: var(--radius); padding: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .full-width { grid-column: span 2; }
+        label { font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        input { padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-family: var(--font); outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: #f59e0b; }
+        .btn-post { grid-column: span 2; background: #f59e0b; color: white; padding: 14px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .success-msg { color: #15803d; background: #f0fdf4; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center; border: 1px solid #bbf7d0; }
+    </style>
+</head>
+<body>
+<div class="topbar"><a href="/entity/soumadwip/Stay" class="back-btn">← Back</a></div>
+<div class="page-header">
+    <span class="badge-post">POST</span>
+    <h2 style="margin-top:8px;">Register Patient Stay</h2>
+</div>
+<div class="content-card">
+    <div th:if="${successMessage}" class="success-msg" th:text="${successMessage}"></div>
+    <form th:action="@{/entity/soumadwip/Stay/create}" method="post" class="form-grid">
+        <div class="form-group"><label>Stay ID</label><input type="number" name="stayId" required/></div>
+        <div class="form-group"><label>Patient ID</label><input type="number" name="patientId" required/></div>
+        <div class="form-group"><label>Room ID</label><input type="number" name="roomId" required/></div>
+        <div class="form-group"><label>Start Date</label><input type="datetime-local" name="stayStart" required/></div>
+        <div class="form-group full-width"><label>End Date (Optional)</label><input type="datetime-local" name="stayEnd"/></div>
+        <button type="submit" class="btn-post">Confirm Registration</button>
+    </form>
+</div>
+</body>
+</html>

@@ -4,6 +4,7 @@ import com.example.frontend.service.StayService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -11,73 +12,90 @@ import java.util.Map;
 @RequestMapping("entity/soumadwip/Stay")
 public class StayController {
 
-    private StayService stayService;
+    private final StayService stayService;
 
     public StayController(StayService stayService){
         this.stayService = stayService;
     }
 
-    //get all stay
-    @GetMapping
-    public String stayPage(Model model){
-        model.addAttribute("stays", stayService.getAllStays());
-        return "stay";
+    @GetMapping("")
+    public String stayHub() {
+        return "stay/stay";
     }
 
-    //get by id
+    // 1. All Stays
+    @GetMapping("/all")
+    public String getAllStays(Model model) {
+        model.addAttribute("stays", stayService.getAllStays());
+        return "stay/all-stays";
+    }
+
+    // 2. Search by ID
+    @GetMapping("/searchByIdPage")
+    public String searchByIdPage() {
+        return "stay/stay-id";
+    }
+
     @GetMapping("/searchById")
-    public String searchById(@RequestParam int id, Model model) {
-        model.addAttribute("stays", stayService.getAllStays());
-        model.addAttribute("stayById", stayService.getStayById(id));
-        return "stay";
+    public String searchById(@RequestParam(required = false) Integer id, Model model) {
+        if (id != null) {
+            model.addAttribute("stayById", stayService.getStayById(id));
+        }
+        return "stay/stay-id";
     }
 
-    //get by patient
+    // 3. Search by Patient
+    @GetMapping("/searchByPatientPage")
+    public String searchByPatientPage() {
+        return "stay/stay-patient";
+    }
+
     @GetMapping("/searchByPatient")
-    public String searchByPatient(@RequestParam int patientId, Model model) {
-        model.addAttribute("stays", stayService.getAllStays());
-        model.addAttribute("stayByPatient", stayService.getStayByPatient(patientId));
-        return "stay";
+    public String searchByPatient(@RequestParam(required = false) Integer patientId, Model model) {
+        if (patientId != null) {
+            model.addAttribute("stayByPatient", stayService.getStayByPatient(patientId));
+        }
+        return "stay/stay-patient";
     }
 
-    //get by room
+    // 4. Search by Room (ADDED THIS SECTION)
+    @GetMapping("/searchByRoomPage")
+    public String searchByRoomPage() {
+        return "stay/stay-room";
+    }
+
     @GetMapping("/searchByRoom")
-    public String searchByRoom(@RequestParam int roomId, Model model) {
-        model.addAttribute("stays", stayService.getAllStays());
-        model.addAttribute("stayByRoom", stayService.getStayByRoom(roomId));
-        return "stay";
+    public String searchByRoom(@RequestParam(required = false) Integer roomId, Model model) {
+        if (roomId != null) {
+            model.addAttribute("stayByRoom", stayService.getStayByRoom(roomId));
+        }
+        return "stay/stay-room";
     }
 
-    //create
+    // 5. Create
+    @GetMapping("/createForm")
+    public String showCreateForm() {
+        return "stay/stay-create";
+    }
+
     @PostMapping("/create")
-    public String createStay(@RequestParam Map<String, Object> stay){
-
-        // Optional: convert values if needed (dates, etc.)
+    public String createStay(@RequestParam Map<String, Object> stay, RedirectAttributes ra) {
         stayService.createStay(stay);
-
-        return "redirect:/entity/soumadwip/Stay";
+        ra.addFlashAttribute("successMessage", "Stay record created successfully!");
+        return "redirect:/entity/soumadwip/Stay/createForm";
     }
 
-    //update
-    @PostMapping("/update/{id}")
-    public String updateStay(@PathVariable int id,
-                             @RequestParam Map<String, Object> stay){
-
-        stayService.updateStay(id, stay);
-
-        return "redirect:/entity/soumadwip/Stay";
+    // 6. Update
+    @GetMapping("/updateFormPage")
+    public String showUpdateForm() {
+        return "stay/stay-update";
     }
 
-    //update form
     @PostMapping("/updateForm")
-    public String updateForm(@RequestParam int id,
-                             @RequestParam Map<String, Object> body) {
-
+    public String processUpdate(@RequestParam int id, @RequestParam Map<String, Object> body, RedirectAttributes ra) {
         body.remove("id");
         stayService.updateStay(id, body);
-
-        return "redirect:/entity/soumadwip/Stay";
+        ra.addFlashAttribute("successMessage", "Stay ID " + id + " updated successfully!");
+        return "redirect:/entity/soumadwip/Stay/updateFormPage";
     }
-
-
 }

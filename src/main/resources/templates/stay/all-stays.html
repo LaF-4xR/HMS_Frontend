@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>All Stays – Stay API</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --bg: #f0f4f8; --card-bg: #ffffff; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+        body { font-family: var(--font); background: var(--bg); padding: 40px 24px; color: #1e293b; }
+        .topbar { max-width: 1000px; margin: 0 auto 28px; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #555; font-size: 13px; padding: 6px 16px; border: 1px solid #ddd; border-radius: 20px; background: #fff; }
+        .page-header { max-width: 1000px; margin: 0 auto 28px; }
+        .badge { font-family: var(--mono); background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; }
+        .content-card { max-width: 1000px; margin: 0 auto; background: #fff; border-radius: var(--radius); padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .mono-text { font-family: var(--mono); font-size: 13px; color: #64748b; }
+    </style>
+</head>
+<body>
+<div class="topbar"><a href="/entity/soumadwip/Stay" class="back-btn">← Back</a></div>
+<div class="page-header"><span class="badge">GET</span><h2 style="margin-top:8px;">All Stay Records</h2></div>
+<div class="content-card">
+    <table id="stayTable" class="display" style="width:100%">
+        <thead><tr><th>Stay ID</th><th>Patient</th><th>Room</th><th>Start Date</th><th>End Date</th></tr></thead>
+        <tbody>
+        <tr th:each="s : ${stays}">
+            <td class="mono-text" th:text="${s.stayId}"></td>
+            <td th:text="${s.patientId}"></td>
+            <td th:text="${s.roomId}"></td>
+            <td class="mono-text" th:text="${s.stayStart}"></td>
+            <td class="mono-text" th:text="${s.stayEnd}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>$(document).ready(function() { $('#stayTable').DataTable({ "pageLength": 10 }); });</script>
+</body>
+</html>

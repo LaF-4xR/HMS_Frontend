@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Room Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-hover: 0 10px 20px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --font: 'DM Sans', sans-serif;
+            --mono: 'DM Mono', monospace;
+        }
+        body { font-family: var(--font); background: var(--bg); padding: 48px 24px; color: #1e293b; }
+
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 32px; font-weight: 700; color: #111; }
+        .header h1 span { background: linear-gradient(135deg, #6366f1, #2563eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .header p { margin-top: 8px; font-size: 14px; color: #888; }
+
+        .top-nav { max-width: 1000px; margin: 0 auto 32px; }
+        .back-btn { text-decoration: none; color: #64748b; font-size: 13px; padding: 6px 16px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .back-btn:hover { background: #f1f5f9; color: #0f172a; }
+
+        .section-label { max-width: 1000px; margin: 32px auto 12px; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+
+        .grid { display: flex; flex-direction: column; gap: 12px; max-width: 1000px; margin: 0 auto; }
+
+        .card { background: var(--card-bg); border-radius: var(--radius); padding: 18px 24px; box-shadow: var(--shadow); border-left: 4px solid var(--c); text-decoration: none; color: inherit; display: flex; align-items: center; gap: 24px; transition: all 0.2s ease; }
+        .card:hover { transform: translateX(8px); box-shadow: var(--shadow-hover); border-left-width: 8px; }
+
+        /* Color themes for different methods */
+        .card.get  { --c: #3b82f6; --cbg: #eff6ff; --ct: #2563eb; }
+        .card.post { --c: #10b981; --cbg: #ecfdf5; --ct: #059669; }
+        .card.put  { --c: #8b5cf6; --cbg: #f5f3ff; --ct: #7c3aed; }
+
+        .badge { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--cbg); color: var(--ct); text-transform: uppercase; margin-right: 8px; }
+
+        .card-info { flex: 0 0 280px; }
+        .card-title { font-size: 15px; font-weight: 700; color: #1e293b; display: block; margin-bottom: 2px; }
+        .card-path { font-family: var(--mono); font-size: 11px; color: #94a3b8; }
+
+        .card-desc { flex: 1; font-size: 13.5px; color: #64748b; line-height: 1.4; border-left: 1px solid #f1f5f9; padding-left: 24px; }
+
+        .card-arrow { font-size: 18px; color: #cbd5e1; transition: transform 0.2s; }
+        .card:hover .card-arrow { color: var(--c); transform: translateX(4px); }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <a href="/" class="back-btn">← Home</a>
+</div>
+
+<header class="header">
+    <h1><span>Room</span> Management</h1>
+    <p>Manage hospital facility infrastructure and room availability</p>
+</header>
+
+<div class="section-label" style="margin-top:0;">Read Operations</div>
+<div class="grid">
+    <a class="card get" th:href="@{/entity/soumadwip/Room/all}">
+        <div class="card-info">
+            <div><span class="badge">GET</span><span class="card-title">All Rooms</span></div>
+            <div class="card-path">/Room/all</div>
+        </div>
+        <div class="card-desc">Retrieve a complete list of all rooms across all blocks and floors.</div>
+        <span class="card-arrow">→</span>
+    </a>
+
+    <a class="card get" th:href="@{/entity/soumadwip/Room/searchByIdPage}">
+        <div class="card-info">
+            <div><span class="badge">GET</span><span class="card-title">Get by ID</span></div>
+            <div class="card-path">/Room/searchById?id=</div>
+        </div>
+        <div class="card-desc">Find specific room details using the unique Room Number.</div>
+        <span class="card-arrow">→</span>
+    </a>
+
+    <a class="card get" th:href="@{/entity/soumadwip/Room/searchByTypePage}">
+        <div class="card-info">
+            <div><span class="badge">GET</span><span class="card-title">Get by Type</span></div>
+            <div class="card-path">/Room/type?roomType=</div>
+        </div>
+        <div class="card-desc">Filter facility rooms by classification (e.g. ICU, Private, General).</div>
+        <span class="card-arrow">→</span>
+    </a>
+</div>
+
+<div class="section-label">Write Operations</div>
+<div class="grid">
+    <a class="card post" th:href="@{/entity/soumadwip/Room/createForm}">
+        <div class="card-info">
+            <div><span class="badge">POST</span><span class="card-title">Register Room</span></div>
+            <div class="card-path">/Room/create</div>
+        </div>
+        <div class="card-desc">Add a new room to the system with block code and floor mapping.</div>
+        <span class="card-arrow">→</span>
+    </a>
+
+    <a class="card put" th:href="@{/entity/soumadwip/Room/updateFormPage}">
+        <div class="card-info">
+            <div><span class="badge">PUT</span><span class="card-title">Update Room</span></div>
+            <div class="card-path">/Room/update/{id}</div>
+        </div>
+        <div class="card-desc">Modify room properties or toggle availability for maintenance status.</div>
+        <span class="card-arrow">→</span>
+    </a>
+</div>
+
+</body>
+</html>

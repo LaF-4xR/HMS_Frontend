@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>All Rooms</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg: #f8fafc; --card-bg: #ffffff; --radius: 16px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
+        body { font-family: var(--font); background: var(--bg); padding: 48px 24px; color: #1e293b; }
+        .topbar { max-width: 1000px; margin: 0 auto 28px; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: #64748b; font-size: 14px; padding: 8px 16px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; transition: all 0.2s; }
+        .back-btn:hover { background: #f1f5f9; color: #0f172a; }
+        .page-header { max-width: 1000px; margin: 0 auto 24px; }
+        .badge { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: #eff6ff; color: #2563eb; }
+        .content-card { max-width: 1000px; margin: 0 auto; background: var(--card-bg); padding: 32px; border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .mono-text { font-family: var(--mono); font-size: 14px; color: #475569; }
+        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .status-avail { background: #dcfce7; color: #166534; }
+        .status-unavail { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <a href="/entity/soumadwip/Room" class="back-btn">← Back to Hub</a>
+</div>
+
+<div class="page-header">
+    <span class="badge">GET</span>
+    <h2 style="margin-top:8px;">All Facility Rooms</h2>
+    <p style="color: #64748b; font-family: var(--mono); font-size: 12px; margin-top: 4px;">/entity/soumadwip/Room/all</p>
+</div>
+
+<div class="content-card">
+    <table id="roomTable" class="display" style="width:100%">
+        <thead>
+        <tr>
+            <th>Room No.</th>
+            <th>Type</th>
+            <th>Block Code</th>
+            <th>Floor</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="r : ${rooms}">
+            <td class="mono-text" th:text="${r.roomNumber}"></td>
+            <td style="font-weight: 500;" th:text="${r.roomType}"></td>
+            <td class="mono-text" th:text="${r.blockCode}"></td>
+            <td th:text="${r.blockFloor}"></td>
+            <td>
+                <span th:if="${r.unavailable == true or r.unavailable == 'true' or r.unavailable == 1}" class="status-badge status-unavail">Unavailable</span>
+                <span th:unless="${r.unavailable == true or r.unavailable == 'true' or r.unavailable == 1}" class="status-badge status-avail">Available</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#roomTable').DataTable({
+            "paging": true, "ordering": true, "info": true, "searching": true, "pageLength": 10
+        });
+    });
+</script>
+</body>
+</html>
